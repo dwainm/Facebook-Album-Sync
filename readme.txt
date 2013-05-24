@@ -1,9 +1,11 @@
 === Plugin Name ===
-Contributors: Dwainm
+Contributors: dwainm
+Donate link: http://dwainm.wordpress.com/donate/
 Tags: Facebook albums,Facebook gallery
 Requires at least: 3.X
-Tested up to: 3.1.3
-Stable tag: 0.1
+Tested up to: 3.5.1
+Stable tag: 0.2
+
 
 Load your Facebook albums on any page by using short codes.
 
@@ -47,10 +49,17 @@ We do offer support via the forum for now, but you can also visit www.miiweb.net
 * Get the albums from Facebook
 * Display all albums with a link to its photos via short code
 
+= 0.2 =
+* Updated plugin readme file.
+* Bug Fixes:
+* *
+
+
 == Upgrade Notice ==
 
-= 1.0 =
-
+= 0.2 =
+- updated plugin to work in wordpress 3.6
+- Made some bug fixes and file renames
 
 == How to ==
 
