@@ -1,9 +1,9 @@
 <?php
 /*
-Plugin Name: Facebook Albums Sync
-Plugin URI: http://miiweb.net/plugins/facebook-albums-sync
-Description: Sync your Facebook albums with your WordPress site and load albums on any page by using short codes.
-Version: 0.1
+Plugin Name: Facebook Album Sync
+Plugin URI: http://miiweb.net/plugins/facebook-album-sync
+Description: Sync your Facebook Page albums with your WordPress site and load albums on any page by using short codes.
+Version: 0.2
 Author: Dwainm
 Author URI: http://dwainm.wordpress.com
 */
@@ -12,11 +12,11 @@ Author URI: http://dwainm.wordpress.com
 /*register_activation_hook(__FILE__,'facebook_albums_sync_install');
 register_deactivation_hook(__FILE__, 'facebook_albums_sync_uninstall');
 function facebook_albums_sync_install(){
-     facebook_albums_sync_uninstall();//force to uninstall option
-     add_option("facebook_albums_sync_secret", generateRandom(10));
+     facebook_album_sync_uninstall();//force to uninstall option
+     add_option("facebook_album_sync_secret", generateRandom(10));
 }
 
-function facebook_albums_sync_uninstall(){
+function facebook_album_sync_uninstall(){
     if(get_option('facebook_albums_sync_secret')){
      delete_option("facebook_albums_sync_secret");
      }
@@ -90,8 +90,13 @@ function facebook_albums_sync_options() {
 //Add Shortcodes
 function fbalbumsync_func($atts) {
 
-    if (get_query_var('fbasid')=="")
-    {
+	if( is_array($atts) ) {
+		if (array_key_exists ( 'album', $atts )){
+			$album_id = $atts['album'];
+		}
+	}
+
+    if (get_query_var('fbasid')=="" && $album_id=="") {
     	//if permalink sturcture is not default
     	$curLink = get_permalink();
     	if (!strpos($curLink, '?')===false ){
@@ -102,6 +107,7 @@ function fbalbumsync_func($atts) {
     	// show albums
     	include('albums.php'); 
     }else{// show specific photos in an album
+
     	include('photos.php');
     }
 }

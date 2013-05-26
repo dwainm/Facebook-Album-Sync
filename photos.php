@@ -2,8 +2,21 @@
 global $post;
 $previouspageURL  = $_SERVER['HTTP_REFERER'];
 
+ // test if the album page is called via short code  
+//  or if the page is called when the user clicks on album link
+
+if ($album_id==""){
+	$album_id = get_query_var('fbasid');
 ?>
-<p><a href="<?PHP echo $previouspageURL?>"> Back to Albums</a></p>
+
+	<p><a href="<?PHP echo $previouspageURL?>"> Back to Albums</a></p>
+
+<?php 	
+
+}
+
+?>
+
 <div id="fbalbumsync">
 
 </div>
@@ -11,7 +24,8 @@ $previouspageURL  = $_SERVER['HTTP_REFERER'];
 
 					//initialize variables
 					var photosCount = 0;
-					var albumId = "<?php echo get_query_var('fbasid') ?>";	
+					var albumId = "<?php echo $album_id ?>";
+					console.log("ID : "+albumId);	
 					var rowItemscnt = 1;
 					var curhtml = "";				
 					function addhtml(html){
