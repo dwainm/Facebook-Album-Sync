@@ -38,7 +38,7 @@ function my_scripts_method() {
 			$url = plugin_dir_url( __FILE__ );
 			//include javascript files
     		wp_enqueue_script( 'jquery_fbalbumsync' );
-			wp_enqueue_script('lightbox',$url.'js/lightbox.js', array('jquery_fbalbumsync'), '1.0', true);
+			wp_enqueue_script('lightbox', $url.'js/lightbox.js', array('jquery'), '1.0', true);
 			wp_enqueue_script('smooth_scroll',$url.'js/jquery.smooth-scroll.min.js', array('jquery_fbalbumsync'), '1.0', true);
     		wp_enqueue_script( 'jquery' );
 			// place this in the javascript of the page

@@ -12,7 +12,7 @@
 					var fbpagename = "<?php echo get_option('fbas_page') ?>";
 					var prettypermalinkon = "<?php echo $prettypermalinkon; ?>"; 
 					var curhtml ="";
-					var loadingImage = "<br /><img id=\"fbloader\"src=\"<?php echo plugins_url();?>/facebook-albums-sync/images/fbloader.gif\" /><br />" ;
+					var loadingImage = "<br /><img id=\"fbloader\"src=\"<?php echo plugins_url();?>/facebook-album-sync/images/fbloader.gif\" /><br />" ;
 					addhtml(loadingImage);			
 					getAlbumPage("https://graph.facebook.com/"+fbpagename+"/albums/");
 					

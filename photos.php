@@ -1,12 +1,14 @@
 <?php
 global $post;
 $previouspageURL  = $_SERVER['HTTP_REFERER'];
+$shortcode_used = true; // used to test if the album page is called directly via shortcode
 
  // test if the album page is called via short code  
 //  or if the page is called when the user clicks on album link
 
 if ($album_id==""){
 	$album_id = get_query_var('fbasid');
+	$shortcode_used = false;
 ?>
 
 	<p><a href="<?PHP echo $previouspageURL?>"> Back to Albums</a></p>
@@ -25,14 +27,19 @@ if ($album_id==""){
 					//initialize variables
 					var photosCount = 0;
 					var albumId = "<?php echo $album_id ?>";
-					console.log("ID : "+albumId);	
 					var rowItemscnt = 1;
-					var curhtml = "";				
+					var curhtml = "";
+					var shortcode_used = <?php echo $shortcode_used ?>;
+					var loadingImage = "<br /><img id=\"fbloader\"src=\"<?php echo plugins_url();?>/facebook-album-sync/images/fbloader.gif\" /><br />" ;
+					addhtml(loadingImage);					
 					function addhtml(html){
 						/* Write the text */
 						document.getElementById('fbalbumsync').innerHTML += html;
 					}
-					getAlbumPhotos("https://graph.facebook.com/"+ albumId +"/photos");
+					getAlbumPhotos("https://graph.facebook.com/"+ albumId +"/photos" );
+					
+					// functions start
+
 					function getAlbumPhotos(fbGraphUrl)
 					{
 						jQuery.ajax({
@@ -45,9 +52,11 @@ if ($album_id==""){
 								getPhotos(data,0);
 							},
 							error: function( data ) {
+								
 								alert('Facebook\'s Graph API might be down.');
 							}
 						});
+						
 					}
 					
 					function getPhotos(jsonObject, i)
@@ -86,25 +95,25 @@ if ($album_id==""){
 						 		addhtml(curhtml);
 							}
 							// setup light box
-							jQuery('#fbalbumsync a').lightBox(); // Select all links that contains lightbox in the attribute rel
-							//alert("lightbox bound");
-							//addhtml("<hr/> FINISH");
-							
-							addhtml("<a href=\"javascript:javascript:history.go(-1)\"> Back to Albums</a> <br /> "); 
+							jQuery('#fbloader').remove();
+							if(!shortcode_used){
+								addhtml("<a href=\"javascript:javascript:history.go(-1)\"> Back to Facebook Albums</a> <br /> ");
 							}
+						}
 						
 					}// End getPhotos
+
 					function getvar( varname )
-						{
-						  name = varname.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-						  var regexS = "[\\?&]"+name+"=([^&#]*)";
-						  var regex = new RegExp( regexS );
-						  var results = regex.exec( window.location.href );
-						  if( results == null )
-							return "";
-						  else
-							return results[1];
-						}
+					{
+					  name = varname.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+					  var regexS = "[\\?&]"+name+"=([^&#]*)";
+					  var regex = new RegExp( regexS );
+					  var results = regex.exec( window.location.href );
+					  if( results == null )
+						return "";
+					  else
+						return results[1];
+					}
 
 					
 	</script>

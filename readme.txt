@@ -87,7 +87,7 @@ You can also submit issues on github [https://github.com/dwainm/Facebook-Albums-
 * Updated plugin readme file.
 * Added ability to load specific album only
 * Bug Fixes:
-* *
+* * fixed loading images and lightbox issues as mentioned here: http://wordpress.org/support/topic/lightbox-13?replies=21
 
 
 == Upgrade Notice ==
