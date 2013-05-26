@@ -29,7 +29,7 @@ if ($album_id==""){
 					var albumId = "<?php echo $album_id ?>";
 					var rowItemscnt = 1;
 					var curhtml = "";
-					var shortcode_used = <?php echo $shortcode_used ?>;
+					var shortcode_used = "<?php echo $shortcode_used ?>";
 					var loadingImage = "<br /><img id=\"fbloader\"src=\"<?php echo plugins_url();?>/facebook-album-sync/images/fbloader.gif\" /><br />" ;
 					addhtml(loadingImage);					
 					function addhtml(html){
@@ -94,12 +94,13 @@ if ($album_id==""){
 							if(rowItemscnt<4){ // if curhtml still has photos as row has not ended
 						 		addhtml(curhtml);
 							}
-							// setup light box
-							jQuery('#fbloader').remove();
+							
 							if(!shortcode_used){
 								addhtml("<a href=\"javascript:javascript:history.go(-1)\"> Back to Facebook Albums</a> <br /> ");
 							}
+							
 						}
+					jQuery('#fbloader').remove();
 						
 					}// End getPhotos
 
