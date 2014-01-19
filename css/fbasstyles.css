@@ -60,8 +60,6 @@ padding-right: 20px;
 
 .row {
 width: 100%;
-max-width: 1140px;
-min-width: 755px;
 margin: 0 auto 10px auto;
 overflow: hidden;
 }
@@ -81,7 +79,7 @@ width: 13.45%;
 }
 
 .row .threecol {
-width: 22.05%;
+width: 159px;
 }
 
 .row .fourcol {

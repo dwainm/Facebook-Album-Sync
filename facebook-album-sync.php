@@ -94,6 +94,12 @@ function fbalbumsync_func($atts) {
 		if (array_key_exists ( 'album', $atts )){
 			$album_id = $atts['album'];
 		}
+
+		if (array_key_exists('exclude', $atts)){
+			$exclude = $atts['exclude'];
+		}
+
+
 	}
 
     if (get_query_var('fbasid')=="" && $album_id=="") {
@@ -119,23 +125,6 @@ add_shortcode('fbalbumsync', 'fbalbumsync_func');
 add_filter('query_vars', 'add_my_var');
 //add_action( 'wp_loaded','fbas_flush_rules' );
 
-/* flush_rules() if our rules are not yet included
-function fbas_flush_rules(){
-	$rules = get_option( 'rewrite_rules' );
-
-	if ( ! isset( $rules['^([^/]*) (project)/(\d*)$'] ) ) {
-		global $wp_rewrite;
-	   	$wp_rewrite->flush_rules();
-	}
-}*/
-
-/* Adding a new rule
-function fbas_rewrite_rules( $rules )
-{
-	$newrules = array();
-	$newrules['^([^/]*)/album/([^/]*) '] = 'index.php?page_id=$matches[1]&fbasid=$matches[2]';
-	return $newrules + $rules;
-}*/
 
 // add our var to the query
 function add_my_var($public_query_vars) {

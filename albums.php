@@ -9,6 +9,11 @@
 <script type="text/javascript">
 					var ALbumsCount = 1;
 					var rowItemscnt = 1;
+					var excludeAlbums = "<?php echo $exclude;  ?>".split(",");
+
+					for (albumid in excludeAlbums){
+    					excludeAlbums[albumid] = excludeAlbums[albumid].trim();
+					}
 					var fbpagename = "<?php echo get_option('fbas_page') ?>";
 					var prettypermalinkon = "<?php echo $prettypermalinkon; ?>"; 
 					var curhtml ="";
@@ -41,10 +46,25 @@
 					// it calls the facbook to get the cover photo url 
 					// is there a way to get the url by just using standard url 
 					// structure? like just plug it in http://facebook.com/photo/".id."/
-					function getAlbums(data, i)
-					{
+					function getAlbums(data, i)	{
+
+					//skip if album is excluded
+					arrayIndex = jQuery.inArray( data.data[i].id  , excludeAlbums );
+					if(arrayIndex !== -1 ){
+
+						if (i < data.data.length - 1){
+							i++;
+							//console.log("<< Get Next Album>>");
+							getAlbums(data, i );
+						}
+						
+					}else{ 
+
 					// album by album get the links and then process the albums 
 					// one by one
+
+
+
 							try{ // test if album as a cover photo
 									var coverPhotograph = 'https://graph.facebook.com/'+data.data[i].cover_photo;
 							
@@ -61,7 +81,8 @@
 								success:function(coverPhotoData){
 								    //determine if the data has a cover photo field 
 								    // if not increment the counter and check the next photo
-								    try{					    										
+								    try{	
+								    				    										
 										var imgsrc =  coverPhotoData.images[5].source;
 										var albumname = data.data[i].name;
 										//console.log(albumname+"=>"+imgsrc);
@@ -152,6 +173,7 @@
 							}); 
 						
 						//process the data from facebook
+						}
 							
 					}
 					
