@@ -70,20 +70,32 @@ if ($album_id==""){
 								
 							}
 							photosCount ++;
-							imgsrc_thumb = jsonObject.data[a].images[5].source;
+
+							console.log(jsonObject.data[a]);
+
+							try {
+								imgsrc_thumb = jsonObject.data[a].images[5].source;
+							} catch (err) {
+								imgsrc_thumb = jsonObject.data[a].source;
+							}
+				          
+
 							imgsrc = jsonObject.data[a].source;
 							//print output 
 							if(rowItemscnt==4){
-										curhtml +="<div class=\"threecol "+rowItemscnt +" last\"><a class=\"photolink\" href=\""+imgsrc+"\" rel=\"lightbox[galleryname]\" ><div class=\"photothumblarge\" style=\"background-image: url("+ imgsrc_thumb +") \" /></div> </a></div> <!-- last col -->";
+										curhtml +="<div class=\"threecol "+rowItemscnt +" last\"><a class=\"photolink\" href=\""+imgsrc+"\" rel=\"lightbox[galleryname]\" ><div class=\"photothumblarge\" style=\" background-size: 100% 100%; background-image: url("+ imgsrc_thumb +") \" /></div> </a></div> <!-- last col -->";
 										curhtml += " </div> <!-- End Row Loop-->" ;
 										// output row
 										addhtml(curhtml);
 										curhtml ="";
 										rowItemscnt = 1;
 							}else{
-										curhtml += "<div class=\"threecol "+rowItemscnt +" \"><a class=\"photolink\" href=\""+imgsrc+"\" rel=\"lightbox[galleryname]\" ><div class=\"photothumblarge\" style=\"background-image: url("+ imgsrc_thumb +") \" /></div></a></div>";
+										curhtml += "<div class=\"threecol "+rowItemscnt +" \"><a class=\"photolink\" href=\""+imgsrc+"\" rel=\"lightbox[galleryname]\" ><div class=\"photothumblarge\" style=\"background-size: 100% 100%; background-image: url("+ imgsrc_thumb +") \" /></div></a></div>";
 										rowItemscnt++;
-							}	
+							}
+
+								
+		
 						}//end for loop
 
 						
@@ -115,6 +127,4 @@ if ($album_id==""){
 					  else
 						return results[1];
 					}
-
-					
-	</script>
+</script>
