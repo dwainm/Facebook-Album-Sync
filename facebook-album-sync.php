@@ -3,7 +3,7 @@
 Plugin Name: Facebook Album Sync
 Plugin URI: http://miiweb.net/plugins/facebook-album-sync
 Description: Sync your Facebook Page albums with your WordPress site and load albums on any page by using short codes.
-Version: 0.2
+Version: 0.3
 Author: Dwainm
 Author URI: http://dwainm.wordpress.com
 */
