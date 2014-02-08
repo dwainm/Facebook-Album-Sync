@@ -4,7 +4,7 @@ Donate link: http://dwainm.wordpress.com/donate/
 Tags: Facebook albums,Facebook gallery
 Requires at least: 3.X
 Tested up to: 3.5.1
-Stable tag: 0.2
+Stable tag: 0.3
 License: GPLv2 or later
 
 
@@ -22,6 +22,8 @@ Here are the key features:
 = Installation Instructions =
 Go to the [Instalation Instructions](http://wordpress.org/extend/plugins/facebook-album-sync/installation/ "Installation Instructions") 
 
+= Please Contribute =
+If you have any code that fixes or enaches this plugin, let me know opening an issue / pull request on Github: [Facebook Albums Sync]("https://github.com/dwainm/Facebook-Album-Sync")
 
 
 
@@ -89,12 +91,21 @@ You can also submit issues on github [https://github.com/dwainm/Facebook-Albums-
 * Bug Fixes:
 * * fixed loading images and lightbox issues as mentioned here: http://wordpress.org/support/topic/lightbox-13?replies=21
 
+= 0.3 =
+* Fixed lightbox photo not working.
+* Fixed photo count to ensure that all album photo's are displayed.
+* Change the lightbox script and loading to version 2 and update the links to reflect the new plugin
+* Removed styling from the back to album link
+* Removed profile, wall and cover albums
 
 == Upgrade Notice ==
 
-= 0.2 =
-- updated plugin to work in wordpress 3.6
-- Made some bug fixes and file renames
+= 0.3 =
+* Fixed lightbox photo not working.
+* Fixed photo count to ensure that all album photo's are displayed.
+* Change the lightbox script and loading to version 2 and update the links to reflect the new plugin
+* Removed styling from the back to album link
+* Removed profile, wall and cover albums
 
 == How to ==
 

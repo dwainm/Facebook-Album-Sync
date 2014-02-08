@@ -29,9 +29,10 @@ if ($album_id==""){
 					var albumId = "<?php echo $album_id ?>";
 					var rowItemscnt = 1;
 					var curhtml = "";
+					var curImage = "";
 					var shortcode_used = "<?php echo $shortcode_used ?>";
-					var loadingImage = "<br /><img id=\"fbloader\"src=\"<?php echo plugins_url();?>/facebook-album-sync/images/fbloader.gif\" /><br />" ;
-					addhtml(loadingImage);					
+					var loadingImage = "<div id='fbloader'></div>" ;
+					addhtml(loadingImage);				
 					function addhtml(html){
 						/* Write the text */
 						document.getElementById('fbalbumsync').innerHTML += html;
@@ -71,7 +72,7 @@ if ($album_id==""){
 							}
 							photosCount ++;
 
-							console.log(jsonObject.data[a]);
+							//console.log(jsonObject.data[a]);
 
 							try {
 								imgsrc_thumb = jsonObject.data[a].images[5].source;
@@ -81,20 +82,28 @@ if ($album_id==""){
 				          
 
 							imgsrc = jsonObject.data[a].source;
-							//print output 
+
+							curImage = "<div class=\"threecol "+rowItemscnt +" \"><a class=\"photolink\" href=\""+imgsrc+"\" data-lightbox=\"fbgallery\" ><div class=\"photothumblarge\" style=\"background-size: cover; background-image: url("+ imgsrc_thumb +") \" /></div></a></div>";
+
 							if(rowItemscnt==4){
-										curhtml +="<div class=\"threecol "+rowItemscnt +" last\"><a class=\"photolink\" href=\""+imgsrc+"\" rel=\"lightbox[galleryname]\" ><div class=\"photothumblarge\" style=\" background-size: 100% 100%; background-image: url("+ imgsrc_thumb +") \" /></div> </a></div> <!-- last col -->";
-										curhtml += " </div> <!-- End Row Loop-->" ;
+								
+										curImage = jQuery(curImage).addClass('last')[0].outerHTML;
+										curImage += "<!-- End Row Loop-->" ;
+										curhtml += curImage;
+
 										// output row
 										addhtml(curhtml);
+
 										curhtml ="";
 										rowItemscnt = 1;
+
 							}else{
-										curhtml += "<div class=\"threecol "+rowItemscnt +" \"><a class=\"photolink\" href=\""+imgsrc+"\" rel=\"lightbox[galleryname]\" ><div class=\"photothumblarge\" style=\"background-size: 100% 100%; background-image: url("+ imgsrc_thumb +") \" /></div></a></div>";
+										console.log(a);
+										curhtml += curImage;
 										rowItemscnt++;
 							}
 
-								
+
 		
 						}//end for loop
 
