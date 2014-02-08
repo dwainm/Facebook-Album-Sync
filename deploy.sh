@@ -3,17 +3,17 @@
 # The difference is that this script lives in the plugin's git repo & doesn't require an existing SVN repo.
 
 # main config
-PLUGINSLUG="multisite-user-management"
+PLUGINSLUG="facebook-album-sync"
 CURRENTDIR=`pwd`
-MAINFILE="ms-user-management.php" # this should be the name of your main php file in the wordpress plugin
+MAINFILE="facebook-album-sync.php" # this should be the name of your main php file in the wordpress plugin
 
 # git config
 GITPATH="$CURRENTDIR/" # this file should be in the base of your git repository
 
 # svn config
 SVNPATH="/tmp/$PLUGINSLUG" # path to a temp SVN repo. No trailing slash required and don't add trunk.
-SVNURL="http://plugins.svn.wordpress.org/multisite-user-management/" # Remote SVN repo on wordpress.org, with no trailing slash
-SVNUSER="thenbrent" # your svn username
+SVNURL="http://plugins.svn.wordpress.org/facebook-album-sync/" # Remote SVN repo on wordpress.org, with no trailing slash
+SVNUSER="dwainm" # your svn username
 
 
 # Let's begin...
