@@ -8,51 +8,122 @@ Author: Dwainm
 Author URI: http://dwainm.wordpress.com
 */
 
-//*********** for install/uninstall actions (optional) ********************//
-/*register_activation_hook(__FILE__,'facebook_albums_sync_install');
-register_deactivation_hook(__FILE__, 'facebook_albums_sync_uninstall');
-function facebook_albums_sync_install(){
-     facebook_album_sync_uninstall();//force to uninstall option
-     add_option("facebook_album_sync_secret", generateRandom(10));
-}
 
-function facebook_album_sync_uninstall(){
-    if(get_option('facebook_albums_sync_secret')){
-     delete_option("facebook_albums_sync_secret");
-     }
-}*/
-//*********** end of install/uninstall actions (optional) ********************//
+//todo 
+//- move all settings html to one file and remove the echo before calling settings.php
 
-// add scripts needed
+/**
+*
+*  Load the needed scripts
+*/
 
 
 function my_scripts_method() {
 
 	global $post;
 	if ( !empty($post) ){
+
         // check the post content for the short code
-        if ( stripos($post->post_content, '[fbalbumsync')!==FALSE ){
-            // we have found a post with the short code
+        if ( stripos($post->post_content, '[fbalbumsync')!==FALSE || 
+        	 stripos($post->post_content, '[facbook_albums')!==FALSE || 
+        	 stripos($post->post_content, '[fbalbumssync')!==FALSE 		){
+
 
 			// $url contains the path to your plugin folder
-			$url = plugin_dir_url( __FILE__ );
-			//include javascript files
-    		wp_enqueue_script( 'jquery_fbalbumsync' );
-			wp_enqueue_script('lightbox', $url.'js/lightbox.js', array('jquery'), '1.0', true);
-			wp_enqueue_script('smooth_scroll',$url.'js/jquery.smooth-scroll.min.js', array('jquery_fbalbumsync'), '1.0', true);
-    		wp_enqueue_script( 'jquery' );
-			// place this in the javascript of the page
-			wp_enqueue_style('lightbox_css',$url.'css/lightbox.css' );
-			wp_enqueue_style( '1140_ie',$url.'css/ie.css' );
-			wp_enqueue_style( 'fbalbumsync_mainstyle',$url.'css/fbasstyles.css' );
-			wp_enqueue_script('fbalbumsync_media_query_js',$url.'js/css3-mediaqueries.js' );
+			$plugin_url = plugin_dir_url( __FILE__ );
 
-			
+			//include javascript files
+    		wp_enqueue_script( 'jquery' );
+			wp_enqueue_script( 'lightbox', $plugin_url.'js/lightbox.js', array('jquery'), '0.4', true );
+			wp_enqueue_script( 'smooth_scroll',$plugin_url.'js/jquery.smooth-scroll.min.js', array('jquery'), '0.4', true );
+			wp_enqueue_script( 'facebook_albums_sync', $plugin_url.'js/facebook-album-sync.js', array('jquery'), '0.4', true  );
+
+			// place this in the javascript of the page
+			wp_enqueue_style('lightbox_css',$plugin_url.'css/lightbox.css' );
+			wp_enqueue_style( '1140_ie',$plugin_url.'css/ie.css' );
+			wp_enqueue_style( 'fbalbumsync_mainstyle',$plugin_url.'css/fbasstyles.css' );
+			wp_enqueue_script('fbalbumsync_media_query_js',$plugin_url.'js/css3-mediaqueries.js' );
+
+
+
+	
        }   
 	}
 }    
-// add scripts to wordpress front end (hook)
+
 add_action('wp_enqueue_scripts', 'my_scripts_method'); 
+
+
+/**
+*
+*  enqueu plugin js in the footer dependant on which page we're on
+*/
+
+function enque_view_scripts(){
+	
+	// $url contains the path to your plugin folder
+	$plugin_url = plugin_dir_url( __FILE__ );
+
+	if( all_albums_view() ){
+
+		wp_enqueue_script('fbas_all_albums_view',$plugin_url.'js/all-albums-view.js' );
+	
+	}else{
+		wp_enqueue_script('fbas_single_album_view',$plugin_url.'js/single-album-view.js' );
+	}
+
+}
+
+
+add_action( 'fbas_shortcode_after', 'enque_view_scripts');
+
+
+/**
+*
+*  generate data for the licalization the variable needed 
+*/
+
+function generate_localized_data($atts){
+
+	$data  = array( 'facebookPageName' => get_option('fbas_page') );
+
+	if( all_albums_view() ){	
+
+		//check if shortcode attributes excludeds any albums
+		if (array_key_exists('exclude', $atts)){
+			$exclude_csv_string = $atts['exclude'];
+		}
+
+		// create the array that will be localizaed
+		$data['exludeAlbums']  = explode(',', $exclude_csv_string );
+		$data['prettyPermalinks'] =   is_pretty_permalinks_on(true); //true tells the function to return string
+		$data['success'] = 'true'; 
+
+	}else{
+
+		if( isset($_REQUEST['fbasid'] ) ){
+
+			$data['albumId'] = $_REQUEST['fbasid'];
+			$data['singleAlbumShortcode'] = 'true'; 
+			$data['success'] = 'true';
+		
+		}else{
+		
+			//do nothing as the album id didn't come through
+			$data['success'] = 'false'; 
+
+		}
+
+	}
+
+	// localize data based ont he page the users viewing
+
+	wp_localize_script( 'facebook_albums_sync' , 'facbookAlbumsSync', $data);
+
+}
+
+
+add_action('fbas_shortcode_before','generate_localized_data');
 
 ///
 add_action('admin_menu', 'facebook_albums_sync_menu');
@@ -87,9 +158,19 @@ function facebook_albums_sync_options() {
 }
 
 
-//Add Shortcodes
+/**
+* the shortcode calls this function fromt the front end
+*
+* @param $attts the attributes passed from the shortcode usage in the page editor
+* @since 0.1 
+*/
+
 function fbalbumsync_func($atts) {
 
+	// alow function to hook in at this point
+	do_action('fbas_shortcode_before', $atts);
+
+	//perform check for shortcode attributes
 	if( is_array($atts) ) {
 		if (array_key_exists ( 'album', $atts )){
 			$album_id = $atts['album'];
@@ -98,37 +179,87 @@ function fbalbumsync_func($atts) {
 		if (array_key_exists('exclude', $atts)){
 			$exclude = $atts['exclude'];
 		}
-
-
 	}
 
-    if (get_query_var('fbasid')=="" && $album_id=="") {
-    	//if permalink sturcture is not default
-    	$curLink = get_permalink();
-    	if (!strpos($curLink, '?')===false ){
-    		$prettypermalinkon = "0";
-    		}else{
-    		$prettypermalinkon = "1";
-    		}
+    if ( all_albums_view() ){
+
     	// show albums
-    	include('albums.php'); 
+    	include('all_albums_view.php'); 
+
     }else{// show specific photos in an album
 
-    	include('photos.php');
+    	include('single_album_view.php');
+
     }
+
+    do_action('fbas_shortcode_after');
 }
+
 add_shortcode('fbalbumsync', 'fbalbumsync_func');
-
-//URL AND QUERY DETAILS
-//add new permalink structure
-//add_filter( 'rewrite_rules_array','fbas_rewrite_rules' );
-add_filter('query_vars', 'add_my_var');
-//add_action( 'wp_loaded','fbas_flush_rules' );
+add_shortcode('fbalbumssync', 'fbalbumsync_func');
+add_shortcode('facbook_albums', 'fbalbumsync_func');
 
 
-// add our var to the query
+/*
+shortocde for the next release:
+*/
+
+/*
+function single_album_view($id){
+	//localize data and add to hook somewher
+			$data['albumId'] = $atts['album'];
+			$data['singleAlbumShortcodeUsed'] = 'true' ;
+}
+
+add_shortcode('fbas_single_album', 'single_view_function');
+
+*/
+
+
+/**
+* add our var to the query
+*
+* @since 0.1 
+*/
 function add_my_var($public_query_vars) {
 	$public_query_vars[] = 'fbasid';
 	return $public_query_vars;
 }
+add_filter('query_vars', 'add_my_var');
 
+
+/**
+* Determine if we're on the all albums view or on the single 
+* album page
+*
+* @since 0.4
+*/
+function all_albums_view(){
+
+		$result = (  !isset( $_REQUEST['fbasid'] ) && !isset( $album_id ) )? true : false;
+
+	    return $result;
+}
+
+/**
+* is_pretty_permalinks_on check the wordpress permalink structure and return true 
+* if we're using pretty permalinks. Returns string valu
+* @since 0.4 
+* @param bool $return_as_string
+* @return string $result 
+*/
+function is_pretty_permalinks_on ($return_as_string=false){
+
+	    global $wp_rewrite;
+
+		$result = false;
+
+		if ($wp_rewrite->permalink_structure == ''){
+			$result =  $return_as_string? 'false' : false; //we are using ?page_id
+		}else{
+			$result = $return_as_string? 'true' : true;
+		}
+
+		return $result;
+
+}
