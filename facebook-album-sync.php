@@ -8,9 +8,6 @@ Author: Dwainm
 Author URI: http://dwainm.wordpress.com
 */
 
-//todo 
-//- move all settings html to one file and remove the echo before calling settings.php
-
 /**
 *
 *  Load the needed scripts
