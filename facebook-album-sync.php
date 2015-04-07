@@ -2,12 +2,11 @@
 /*
 Plugin Name: Facebook Album Sync
 Plugin URI: http://miiweb.net/plugins/facebook-album-sync
-Description: Sync your Facebook Page albums with your WordPress site and load albums on any page by using short codes.
-Version: 0.3
+Description: Show your Facebook Page albums on your website. Load albums on any page by using the plugin short code.
+Version: 1.0-alpha
 Author: Dwainm
 Author URI: http://dwainm.wordpress.com
 */
-
 
 //todo 
 //- move all settings html to one file and remove the echo before calling settings.php
@@ -33,10 +32,9 @@ function my_scripts_method() {
 			$plugin_url = plugin_dir_url( __FILE__ );
 
 			//include javascript files
-    		wp_enqueue_script( 'jquery' );
 			wp_enqueue_script( 'lightbox', $plugin_url.'js/lightbox.js', array('jquery'), '0.4', true );
 			wp_enqueue_script( 'smooth_scroll',$plugin_url.'js/jquery.smooth-scroll.min.js', array('jquery'), '0.4', true );
-			wp_enqueue_script( 'facebook_albums_sync', $plugin_url.'js/facebook-album-sync.js', array('jquery'), '0.4', true  );
+			wp_enqueue_script( 'facebook_albums_sync', $plugin_url.'js/facebook-album-sync.js', array('jquery','underscore','backbone'), '0.4', true  );
 
 			// place this in the javascript of the page
 			wp_enqueue_style('lightbox_css',$plugin_url.'css/lightbox.css' );
@@ -44,12 +42,9 @@ function my_scripts_method() {
 			wp_enqueue_style( 'fbalbumsync_mainstyle',$plugin_url.'css/fbasstyles.css' );
 			wp_enqueue_script('fbalbumsync_media_query_js',$plugin_url.'js/css3-mediaqueries.js' );
 
-
-
-	
        }   
 	}
-}    
+} // end my_scripts_method     
 
 add_action('wp_enqueue_scripts', 'my_scripts_method'); 
 
