@@ -61,10 +61,10 @@ function enque_view_scripts(){
 
 	if( all_albums_view() ){
 
-		wp_enqueue_script('fbas_all_albums_view',$plugin_url.'js/all-albums-view.js' );
+		wp_enqueue_script('fbas_all_albums_view',$plugin_url.'js/all-albums-view.js', array('jquery','underscore','backbone'), '0.4', true );
 	
 	}else{
-		wp_enqueue_script('fbas_single_album_view',$plugin_url.'js/single-album-view.js' );
+		wp_enqueue_script('fbas_single_album_view',$plugin_url.'js/single-album-view.js', array('jquery','underscore','backbone'), '0.4', true );
 	}
 
 }
