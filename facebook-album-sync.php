@@ -83,14 +83,14 @@ function generate_localized_data($atts){
 	$data  = array( 'facebookPageName' => get_option('fbas_page') );
 
 	if( all_albums_view() ){	
-
-		//check if shortcode attributes excludeds any albums
-		if (array_key_exists('exclude', $atts)){
-			$exclude_csv_string = $atts['exclude'];
-		}
-
+		//
 		// create the array that will be localizaed
-		$data['exludeAlbums']  = explode(',', $exclude_csv_string );
+		//
+		if ( isset( $atts['exclude'] ) && array_key_exists('exclude', $atts ) ){
+			//check if shortcode attributes excludeds any albums
+			$exclude_csv_string = $atts['exclude'];
+			$data['exludeAlbums']  = explode(',', $exclude_csv_string );
+		}
 		$data['prettyPermalinks'] =   is_pretty_permalinks_on(true); //true tells the function to return string
 		$data['success'] = 'true'; 
 
