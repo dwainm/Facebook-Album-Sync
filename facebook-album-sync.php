@@ -32,15 +32,15 @@ function my_scripts_method() {
 			$plugin_url = plugin_dir_url( __FILE__ );
 
 			//include javascript files
-			wp_enqueue_script( 'lightbox', $plugin_url.'js/lightbox.js', array('jquery'), '0.4', true );
-			wp_enqueue_script( 'smooth_scroll',$plugin_url.'js/jquery.smooth-scroll.min.js', array('jquery'), '0.4', true );
+			wp_enqueue_script( 'lightbox', $plugin_url.'js/lib/lightbox.js', array('jquery'), '0.4', true );
+			wp_enqueue_script( 'smooth_scroll',$plugin_url.'js/lib/jquery.smooth-scroll.min.js', array('jquery'), '0.4', true );
 			wp_enqueue_script( 'facebook_albums_sync', $plugin_url.'js/facebook-album-sync.js', array('jquery','underscore','backbone'), '0.4', true  );
 
 			// place this in the javascript of the page
 			wp_enqueue_style('lightbox_css',$plugin_url.'css/lightbox.css' );
 			wp_enqueue_style( '1140_ie',$plugin_url.'css/ie.css' );
 			wp_enqueue_style( 'fbalbumsync_mainstyle',$plugin_url.'css/fbasstyles.css' );
-			wp_enqueue_script('fbalbumsync_media_query_js',$plugin_url.'js/css3-mediaqueries.js' );
+			wp_enqueue_script('fbalbumsync_media_query_js',$plugin_url.'js/lib/css3-mediaqueries.js' );
 
        }   
 	}
@@ -124,23 +124,11 @@ add_action('fbas_shortcode_before','generate_localized_data');
 add_action('admin_menu', 'facebook_albums_sync_menu');
 
 function facebook_albums_sync_menu() {
-    //$pending = '<span class="update-plugins"><span class="pending-count">7</span></span>';
-	//add_menu_page('Facebook Album Sync', 'Facebook Album Sync'.$pending, 'manage_options', 'facebook_albums_sync', 'facebook_albums_sync_options');
+
 	add_options_page('Facebook Album Sync', 'Facebook Albums', 'manage_options', 'facebook_albums_sync', 'facebook_albums_sync_options');    
-    //add_submenu_page( 'facebook_albums_sync', 'Super Plugin', 'Settings', 'manage_options', 'super_plugin_unique_url', 'facebook_albums_sync_options');
     
 }
 
-function super_plugin_unique_url(){
-  	if (!current_user_can('manage_options'))  {
-		wp_die( __('You do not have sufficient permissions to access this page.') );
-	}
-	echo '<div class="wrap">';
-    echo '<h2>This is Settings Page</h2>';
-	echo '<p>Include PHP file for better readability of your code.</p>';
-	echo '</div>';
-
-}
 
 function facebook_albums_sync_options() {
 	if (!current_user_can('manage_options'))  {
@@ -148,7 +136,7 @@ function facebook_albums_sync_options() {
 	}
 	echo '<div class="wrap">';
     echo '<h2>Facebook Albums Sync Settings</h2>';
-    include('settings.php');
+    include('includes/settings.php');
 	echo '</div>';
 }
 
@@ -179,11 +167,11 @@ function fbalbumsync_func($atts) {
     if ( all_albums_view() ){
 
     	// show albums
-    	include('all_albums_view.php'); 
+    	include('templates/all-albums.php'); 
 
     }else{// show specific photos in an album
 
-    	include('single_album_view.php');
+    	include('templates/single-album.php');
 
     }
 
@@ -193,23 +181,6 @@ function fbalbumsync_func($atts) {
 add_shortcode('fbalbumsync', 'fbalbumsync_func');
 add_shortcode('fbalbumssync', 'fbalbumsync_func');
 add_shortcode('facbook_albums', 'fbalbumsync_func');
-
-
-/*
-shortocde for the next release:
-*/
-
-/*
-function single_album_view($id){
-	//localize data and add to hook somewher
-			$data['albumId'] = $atts['album'];
-			$data['singleAlbumShortcodeUsed'] = 'true' ;
-}
-
-add_shortcode('fbas_single_album', 'single_view_function');
-
-*/
-
 
 /**
 * add our var to the query
