@@ -1,57 +1,110 @@
 /**
- * The javascript fetches all albums and their artwork and displays thme in a Grid
- *
- * The albums all link to a page with their specific potos
- */
-( function( $ , _ , Backbone ){
-   
-    //facbookAlbumsSync is localized through WordPress
-    var ALbumsCount = 1;
-    var rowItemscnt = 1;
-    var excludeAlbums = facbookAlbumsSync.excludeAlbums;
+* Facebook Album Sync - Album Model and Collection 
+*
+* The model is the foundation of Facebook Album Sync. It will store all the album information.
+*/ 
 
-    for (albumid in excludeAlbums){
-        excludeAlbums[albumid] = excludeAlbums[albumid].trim();
-    }
+(function( $, _ , Backbone ){
 
-    var fbpagename = facbookAlbumsSync.facebookPageName;
+fbas = window.fbas || {};
 
-    var prettypermalinkon = facbookAlbumsSync.prettyPermalinks ;
-    var curhtml ="";
-    var loadingImage = "<div id='fbloader'></div>" ;
-    
-    addhtml(loadingImage);
-    
-    fbGraphUrl = "https://graph.facebook.com/"+fbpagename+"/albums/"
+//the model for storing the important information related to an album
+fbas.AlbumModel = Backbone.Model.extend({
+	defaults : {
+			"id"           : "",
+		    "from"         : {},
+		    "name"         : "",
+		    "link"         : "",
+		    "count"        : 0,
+		    "type"         : "",
+		    "created_time" : "",
+		    "updated_time" : "",
+		    "can_upload"   : false
+	}
+});
 
-    getAlbumPage( fbGraphUrl )
-  
-    function addhtml(html){
-        /* Write the text */
-        document.getElementById('fbalbumsync').innerHTML += html;
-    }
-
-    function getAlbumPage( apiUrl )
-    {
-          $.ajax({
-        dataType: 'jsonp',
-        url: apiUrl,
-        type: 'GET',
-        success: function getpages(data){
-            getAlbums(data,0);
+// a colleciton for all abums
+fbas.AlbumCollection = Backbone.Collection.extend({
+            
+        model: fbas.AlbumModel,
+        
+        initialize: function( url ){
+    		this.url = url;
         },
-        error: function( data ) {
-            console.log( "Error: Facebook\'s Graph API might be down. \n" + data );
-        }
-    });
-      
-    }
-// Note to developer:
-// There something wrong with this code
-// it calls the facbook to get the cover photo url
-// is there a way to get the url by just using standard url
-// structure? like just plug it in http://facebook.com/photo/".id."/
-    function getAlbums(data, i)	{
+
+        sync: function(){
+
+        	// triger sync start
+        	this.trigger('syncStart'); 
+
+        	// get albums for storage
+        	this.fetchAlbums();
+
+        	// triger sync start
+        	this.trigger('syncEnd'); 
+
+        },
+
+        /**
+        *  The ajax function that wraps jQuery and returns a promise 
+        */
+        ajax : function( url ){
+
+            // return the defered object
+            // but ensure that this is bind to to the collection and 
+            // not the global windoew object
+        	return 	$.ajax({
+				dataType: 'jsonp',
+				url: url,
+				type: 'GET',
+				error: function( data ) {
+					console.log( "Error: Facebook\'s Graph API might be down. \n" + data );
+				}
+			});
+
+        },
+
+        /** 
+        * Get all ablums and store it in this collection
+        */
+        fetchAlbums: function ( url ){
+
+	    	// set up the url for the next api call
+	    	// if the url is not by the calling funciton
+	    	// the models url will be used ad the default.
+	    	var apiUrl = this.url;
+	    	if( ! _.isEmpty( url ) ){
+	    		apiUrl = url; 
+	    	}
+            
+            // reference to this to be used inside ajax done callback
+            var thisCollection = this;
+
+	    	//fetch the data for this request
+	    	this.ajax( apiUrl ).done( function ( apiJson ) {
+	    			
+	    		 // store the album data
+			    _.each(  apiJson.data ,function( albumJson, index ){
+
+			    	var album = new thisCollection.model( albumJson );	
+			    	thisCollection.add( album );
+
+			    });	
+
+			    // Check if the api has more albums avaialbe then fetch them
+			    if( ! _.isEmpty( apiJson.paging.next) ){
+			    	thisCollection.fetchAlbums(  apiJson.paging.next );
+			    }
+
+	    	}); // end ajax call
+
+	    }, // end fetchAlbums
+    
+    }); // end collection
+
+}( jQuery, _ , Backbone ));
+
+function getAlbums(data, i)	{
 
         //skip if album is excluded
         arrayIndex = $.inArray( data.data[i].id  , excludeAlbums );
@@ -195,5 +248,3 @@
         }
 
     }
-
-} ( jQuery , _ , Backbone) ) ;
