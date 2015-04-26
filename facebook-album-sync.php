@@ -36,6 +36,7 @@ function my_scripts_method() {
 			//include javascript files
 			wp_enqueue_script( 'lightbox', $plugin_url.'js/lib/lightbox.js', array('jquery'), '0.4', true );
 			wp_enqueue_script( 'smooth_scroll',$plugin_url.'js/lib/jquery.smooth-scroll.min.js', array('jquery'), '0.4', true );
+			wp_enqueue_script( 'fbas-react',$plugin_url.'js/lib/react.min.js', array(), fbas_version(), true );
 			wp_enqueue_script( 'facebook_albums_sync', $plugin_url.'js/facebook-album-sync.js', array('jquery','underscore','backbone'), '0.4', true  );
 
 			// place this in the javascript of the page
