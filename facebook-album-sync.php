@@ -64,11 +64,11 @@ function enque_view_scripts(){
 
 	if( all_albums_view() ){
 		// load the album model file that contains the logic for fetching albums from facebook.
-		wp_enqueue_script('fbas-model-album',$plugin_url.'js/models/album.js', array('jquery','underscore','backbone'), fbas_version() , true );
-		wp_enqueue_script('fbas_all_albums_view',$plugin_url.'js/views/all-albums.js', array('jquery','underscore','backbone'), '0.4', true );
+		wp_enqueue_script('fbas-model-album',$plugin_url.'js/models/album.js', array('jquery','underscore','backbone', 'fbas-react'), fbas_version() , true );
+		wp_enqueue_script('fbas_all_albums_view',$plugin_url.'js/views/all-albums.js', array('jquery','underscore','backbone', 'fbas-react'), '0.4', true );
 	
 	}else{
-		wp_enqueue_script('fbas_single_album_view',$plugin_url.'js/views/single-album.js', array('jquery','underscore','backbone'), '0.4', true );
+		wp_enqueue_script('fbas_single_album_view',$plugin_url.'js/views/single-album.js', array('jquery','underscore','backbone', 'fbas-react'), '0.4', true );
 	}
 
 }
