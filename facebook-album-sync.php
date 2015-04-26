@@ -13,6 +13,11 @@ Author URI: http://dwainm.wordpress.com
 *  Load the needed scripts
 */
 
+function fbas_version(){
+	$plugin_version = '1.0-alpha';
+	return $plugin_version;
+
+}// end version
 
 function my_scripts_method() {
 
