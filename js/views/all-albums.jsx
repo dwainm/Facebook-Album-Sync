@@ -2,6 +2,8 @@
  * The javascript fetches all albums and their artwork and displays thme in a Grid
  *
  * The albums all link to a page with their specific potos
+ *
+ * The code using
  */
 ( function( fbas ,$ , _ , Backbone , React ){
 
@@ -14,7 +16,7 @@
     var rowItemscnt = 1;
     var excludeAlbums = facbookAlbumsSync.excludeAlbums;
     var prettypermalinkon = facbookAlbumsSync.prettyPermalinks ;
-    
+
     // exclude albums
     for (albumid in excludeAlbums){
         excludeAlbums[albumid] = excludeAlbums[albumid].trim();
@@ -23,50 +25,131 @@
     var apiUrl = "https://graph.facebook.com/" +  facbookAlbumsSync.facebookPageName + "/albums/"
 
     // setup new collection to hold all albums
-   var allAlbums = new fbas.AlbumCollection( apiUrl );
+    allAlbums = new fbas.AlbumCollection();
+    allAlbums.url = apiUrl;
 
-   // intialize the view
-  
+    // fetch the albums and fill the albums collection
+    allAlbums.sync();
 
-   // fetch the albums and fill the albums collection
-   allAlbums.sync();
+    /**
+     * Merge React and Backbone
+     */
+    var AlbumCollectionMixin = {
+        componentDidMount: function() {
+            // Whenever there may be a change in the Backbone data, trigger a reconcile.
+            this.getBackboneCollection().on('add change remove',this.update.bind(this, null), this);
+        },
 
-    // tutorial1.js
-    var CommentBox = React.createClass({
+        componentWillUnmount: function() {
+            // Ensure that we clean up any dangling references when the component is
+            // destroyed.
+            this.getBackboneCollection().off(null, null, this);
+        }
+    };
+
+    var AlbumModelMixin = {
+        componentDidMount: function() {
+            // Whenever there may be a change in the Backbone data, trigger a reconcile.
+            this.getModel().on('add change remove',this.update.bind(this, null), this);
+        },
+
+        componentWillUnmount: function() {
+            // Ensure that we clean up any dangling references when the component is
+            // destroyed.
+            this.getModel().off(null, null, this);
+        }
+    };
+
+    // Individual album component
+    var AlbumComponent = React.createClass({
+
+        mixins: [AlbumModelMixin],
+
+        getInitialState:function(){
+            this.props.albumModel.set({photoUrl: 'https://www.facebookbrand.com/img/assets/asset.f.logo.lg.png'})
+            return this.props.albumModel;
+        },
+
+        update: function( e, changedModel ){
+            this.forceUpdate();
+        },
+
+        /**
+         * Return state which is the backbone model
+         */
+        getModel: function(){
+            return this.state;
+        },
+        /**
+         * @returns XML
+         */
+        render: function(){
+           return( <img  key={this.state.id} src={this.state.get('photoUrl')}  />);
+        },
+
+    });
+
+    // initialize the albums <component></component>
+    var AlbumsComponent = React.createClass({
+        mixins: [AlbumCollectionMixin],
+        getBackboneCollection: function() {
+            return allAlbums;
+        },
+        getInitialState: function(){
+            return {albums: [ ] };
+        },
+        update: function( e,change ){
+
+            this.setState({ albums : change.collection.models });
+
+           // console.log( this.state );
+            this.forceUpdate();
+        },
         render: function() {
             return (
-                <div className="commentBox">
-            Hello, world! I am a CommentBox.
-            </div>
+                <ul>{
+                    this.state.albums.map(function(album, index ) {
+
+                        return( <li key={album.attributes.id} id={album.attributes.id}>
+                                    <AlbumComponent albumModel={album} />
+                                </li>)
+
+                    })
+                    }
+                </ul>
             );
         }
     });
+
+
+
     React.render(
-    <CommentBox />,
-        document.getElementById('content')
+    <AlbumsComponent albums={allAlbums} />,
+        document.getElementById('fbalbumsync')
     );
+
 
     function getAlbumPage( apiUrl )
     {
-          $.ajax({
-        dataType: 'jsonp',
-        url: apiUrl,
-        type: 'GET',
-        success: function getpages(data){
-            getAlbums(data,0);
-        },
-        error: function( data ) {
-            console.log( "Error: Facebook\'s Graph API might be down. \n" + data );
-        }
-    });
-      
+        $.ajax({
+            dataType: 'jsonp',
+            url: apiUrl,
+            type: 'GET',
+            success: function getpages(data){
+                getAlbums(data,0);
+            },
+            error: function( data ) {
+                console.log( "Error: Facebook\'s Graph API might be down. \n" + data );
+            }
+        });
+
     }
 // Note to developer:
 // There something wrong with this code
 // it calls the facbook to get the cover photo url
 // is there a way to get the url by just using standard url
 // structure? like just plug it in http://facebook.com/photo/".id."/
-    function getAlbums(data, i)	{
+   /* function getAlbums(data, i)	{
 
         //skip if album is excluded
         arrayIndex = $.inArray( data.data[i].id  , excludeAlbums );
@@ -74,11 +157,11 @@
         if(arrayIndex !== -1 ){
 
             if (i < data.data.length - 1){
-                
+
                 i++;
                 getAlbums(data, i );
                 return;
-                
+
             }
 
         }else{
@@ -209,6 +292,6 @@
             //process the data from facebook
         }
 
-    }
+    }*/
 
 } ( window.fbas, jQuery , _ , Backbone, React ) ) ;

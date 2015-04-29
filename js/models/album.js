@@ -8,29 +8,31 @@
 
 fbas = window.fbas || {};
 
-//the model for storing the important information related to an album
 fbas.AlbumModel = Backbone.Model.extend({
-	defaults : {
-			"id"           : "",
-		    "from"         : {},
-		    "name"         : "",
-		    "link"         : "",
-		    "count"        : 0,
-		    "type"         : "",
-		    "created_time" : "",
-		    "updated_time" : "",
-		    "can_upload"   : false
-	}
-});
 
+    initialize: function(){
+        if( this.attributes.cover_photo ) {
+
+            var coverPhotoApiUrl = 'https://graph.facebook.com/' + this.attributes.cover_photo;
+            $.ajax({
+                dataType: 'jsonp',
+                url: coverPhotoApiUrl,
+                type: 'GET'
+            }).done( _.bind( this.processCoverPhoto, this) );
+
+        }
+    },
+    /**
+     * Respond to the Ajax request get the album cover url
+     */
+    processCoverPhoto: function( ajaxData ){
+
+        this.set( { photoUrl: ajaxData.images[0].source } );
+
+    }
+});
 // a colleciton for all abums
 fbas.AlbumCollection = Backbone.Collection.extend({
-            
-        model: fbas.AlbumModel,
-        
-        initialize: function( url ){
-    		this.url = url;
-        },
 
         sync: function(){
 
@@ -86,8 +88,8 @@ fbas.AlbumCollection = Backbone.Collection.extend({
 	    		 // store the album data
 			    _.each(  apiJson.data ,function( albumJson, index ){
 
-			    	var album = new thisCollection.model( albumJson );	
-			    	thisCollection.add( album );
+                    var model = new fbas.AlbumModel(albumJson );
+                    thisCollection.add( model );
 
 			    });	
 

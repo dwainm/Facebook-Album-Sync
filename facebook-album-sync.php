@@ -36,7 +36,6 @@ function my_scripts_method() {
 			//include javascript files
 			wp_enqueue_script( 'lightbox', $plugin_url.'js/lib/lightbox.js', array('jquery'), '0.4', true );
 			wp_enqueue_script( 'smooth_scroll',$plugin_url.'js/lib/jquery.smooth-scroll.min.js', array('jquery'), '0.4', true );
-			wp_enqueue_script( 'fbas-react',$plugin_url.'js/lib/react.min.js', array(), fbas_version(), true );
 			wp_enqueue_script( 'facebook_albums_sync', $plugin_url.'js/facebook-album-sync.js', array('jquery','underscore','backbone'), '0.4', true  );
 
 			// place this in the javascript of the page
@@ -61,6 +60,7 @@ function enque_view_scripts(){
 	
 	// $url contains the path to your plugin folder
 	$plugin_url = plugin_dir_url( __FILE__ );
+    wp_enqueue_script( 'fbas-react',$plugin_url.'js/lib/react/react.min.js', array(), fbas_version(), true );
 
 	if( all_albums_view() ){
 		// load the album model file that contains the logic for fetching albums from facebook.
@@ -72,10 +72,43 @@ function enque_view_scripts(){
 	}
 
 }
+//add_action( 'fbas_shortcode_after', 'enque_view_scripts');
 
+/**
+* This function is to use react in developer mode.
+* It prints out the jsx compiler and the jsx scripts.
+*/
+function print_dev_jsx_scripts(){
 
-add_action( 'fbas_shortcode_after', 'enque_view_scripts');
+	// $url contains the path to your plugin folder
+	$plugin_url = plugin_dir_url( __FILE__ );
 
+	// load the jsx compiler script
+	echo _fbas_generate_script( $plugin_url.'js/lib/react/react.js' );
+    echo _fbas_generate_script( $plugin_url.'js/lib/react/react-jsx.js' );
+    if( all_albums_view() ){
+		
+		// load the album model file that contains the logic for fetching albums from facebook.
+		echo _fbas_generate_script( $plugin_url.'js/models/album.js' );
+        echo _fbas_generate_script( $plugin_url.'js/views/all-albums.jsx', 'text/jsx' );
+	
+	}else{
+		wp_enqueue_script('fbas_single_album_view',$plugin_url.'js/views/single-album.js', array('jquery','underscore','backbone', 'fbas-react'), '0.4', true );
+	}
+	
+}
+
+add_action( 'wp_footer', 'print_dev_jsx_scripts', 80);
+
+/**
+* Create a script tag for the given script url and type
+* only to be used in development. For product use wp_enqueue_script
+*/
+function _fbas_generate_script( $url, $type = 'text/javascript' ){
+
+	return "<script type=\"$type\" src=\"$url\"></script>";
+
+}
 
 /**
 *
