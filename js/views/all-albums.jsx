@@ -110,7 +110,7 @@
                 <ul>{
                     this.state.albums.map(function(album, index ) {
 
-                        return( <li key={album.attributes.id} id={album.attributes.id}>
+                        return( <li  key={album.attributes.id} id={album.attributes.id} className="col-1-4" >
                                     <AlbumComponent albumModel={album} />
                                 </li>)
 
