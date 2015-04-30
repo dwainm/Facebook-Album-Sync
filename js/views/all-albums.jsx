@@ -7,7 +7,8 @@
  */
 ( function( fbas ,$ , _ , Backbone , React ){
 
-    // show the loading 
+    // show the loading
+    //TODO: LODAING
     //var loadingImage = "<div id='fbloader'></div>" ;
     //addhtml(loadingImage);  
 

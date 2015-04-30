@@ -10,10 +10,12 @@ fbas = window.fbas || {};
 
 fbas.AlbumModel = Backbone.Model.extend({
 
-    initialize: function(){
+    initialize: function( newData, collection ){
         if( this.attributes.cover_photo ) {
 
-            var coverPhotoApiUrl = 'https://graph.facebook.com/' + this.attributes.cover_photo;
+            // notify the collection that this model is loading
+            collection.addToLoadingQueue( this );
+            var  coverPhotoApiUrl = 'https://graph.facebook.com/' + this.attributes.cover_photo
             $.ajax({
                 dataType: 'jsonp',
                 url: coverPhotoApiUrl,
@@ -28,12 +30,46 @@ fbas.AlbumModel = Backbone.Model.extend({
     processCoverPhoto: function( ajaxData ){
 
         this.set( { photoUrl: ajaxData.images[0].source } );
+        this.collection.removeFromLoadingQueue( this );
 
     }
 });
-// a colleciton for all abums
+// a collection for all albums
 fbas.AlbumCollection = Backbone.Collection.extend({
 
+        initialize: function(){
+            // loading queue that determine
+            // if loading can be hidden or shown
+            this.loadingQueue = [];
+        },
+
+        isLoading: function(){
+
+          if( this.loadingQueue.length > 0  ){
+              return true;
+          }  else{
+              return false;
+          }
+
+        },
+    /**
+     * Push model on top of the loading queue and
+     * trigger updated event.
+     */
+        addToLoadingQueue: function( model ){
+
+            this.loadingQueue.push( model.id );
+            this.trigger('update');
+
+        },
+    /**
+     * Pop the model from the loading queue and trigger
+     * the update event.
+     */
+       removeFromLoadingQueue: function( model ){
+            this.loadingQueue.pop( model.id );
+            this.trigger('update');
+        },
         sync: function(){
 
         	// triger sync start
@@ -88,7 +124,7 @@ fbas.AlbumCollection = Backbone.Collection.extend({
 	    		 // store the album data
 			    _.each(  apiJson.data ,function( albumJson, index ){
 
-                    var model = new fbas.AlbumModel(albumJson );
+                    var model = new fbas.AlbumModel(albumJson, thisCollection );
                     thisCollection.add( model );
 
 			    });	
