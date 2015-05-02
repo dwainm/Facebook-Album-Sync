@@ -9,7 +9,7 @@
 
     // show the loading
     //TODO: LODAING
-    //var loadingImage = "<div id='fbloader'></div>" ;
+    //var loadingImage = "" ;
     //addhtml(loadingImage);  
 
     //facbookAlbumsSync is localized through WordPress
@@ -38,7 +38,7 @@
     var AlbumCollectionMixin = {
         componentDidMount: function() {
             // Whenever there may be a change in the Backbone data, trigger a reconcile.
-            this.getBackboneCollection().on('add change remove',this.update.bind(this, null), this);
+            this.getBackboneCollection().on('update add change remove',this.update.bind(this, null), this);
         },
 
         componentWillUnmount: function() {
@@ -97,26 +97,39 @@
             return allAlbums;
         },
         getInitialState: function(){
-            return {albums: [ ] };
+            return {models: [ ] };
         },
         update: function( e,change ){
 
-            this.setState({ albums : change.collection.models });
+            //todo: why is change empty at times?
+            if( ! _.isEmpty( change ) ) {
+                this.setState(change.collection);
+            }
 
-           // console.log( this.state );
             this.forceUpdate();
-        },
-        render: function() {
-            return (
-                <ul>{
-                    this.state.albums.map(function(album, index ) {
 
+        },
+
+        /**
+        * Render the component
+        */
+        render: function() {
+
+            var loaderClass = 'visible';
+            if( _.isEmpty( this.state.loadingQueue )){
+                var loaderClass = 'hidden';
+            }
+
+            return (
+                <ul>
+                {[ <div className={loaderClass} id='fbloader'></div> ,
+                    this.state.models.map( function(album, index ) {
                         return( <li  key={album.attributes.id} id={album.attributes.id} className="col-1-4" >
                                     <AlbumComponent albumModel={album} />
                                 </li>)
 
-                    })
-                    }
+                    })// end state map function
+                ]}
                 </ul>
             );
         }

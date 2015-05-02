@@ -47,6 +47,10 @@ body {
     background-image: url('../images/loading.gif');
 }
 
+#fbloader.hidden{
+    visibility: hidden;
+}
+
 /* ============================== */
 /* ! CSS Loader animation         */
 /* ============================== */

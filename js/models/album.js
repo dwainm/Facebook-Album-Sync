@@ -42,16 +42,6 @@ fbas.AlbumCollection = Backbone.Collection.extend({
             // if loading can be hidden or shown
             this.loadingQueue = [];
         },
-
-        isLoading: function(){
-
-          if( this.loadingQueue.length > 0  ){
-              return true;
-          }  else{
-              return false;
-          }
-
-        },
     /**
      * Push model on top of the loading queue and
      * trigger updated event.
@@ -107,6 +97,9 @@ fbas.AlbumCollection = Backbone.Collection.extend({
         */
         fetchAlbums: function ( url ){
 
+
+            this.addToLoadingQueue( this );
+
 	    	// set up the url for the next api call
 	    	// if the url is not by the calling funciton
 	    	// the models url will be used ad the default.
@@ -127,8 +120,9 @@ fbas.AlbumCollection = Backbone.Collection.extend({
                     var model = new fbas.AlbumModel(albumJson, thisCollection );
                     thisCollection.add( model );
 
-			    });	
+			    });
 
+                thisCollection.removeFromLoadingQueue( thisCollection );
 			    // Check if the api has more albums avaialbe then fetch them
 			    if( ! _.isEmpty( apiJson.paging.next) ){
 			    	thisCollection.fetchAlbums(  apiJson.paging.next );
