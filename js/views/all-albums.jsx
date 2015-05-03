@@ -85,7 +85,8 @@
          * @returns XML
          */
         render: function(){
-           return( <img  key={this.state.id} src={this.state.get('photoUrl')}  />);
+            var linkToAlbumPage = document.URL+"?fbasid=" + this.state.id;
+           return(  <a className="album-link" href={linkToAlbumPage} ><img  key={this.state.id} src={this.state.get('photoUrl')}  /> </a>);
         },
 
     });
