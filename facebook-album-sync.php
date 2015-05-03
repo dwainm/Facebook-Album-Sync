@@ -2,21 +2,22 @@
 /*
 Plugin Name: Facebook Album Sync
 Plugin URI: http://miiweb.net/plugins/facebook-album-sync
-Description: Sync your Facebook Page albums with your WordPress site and load albums on any page by using short codes.
-Version: 0.3
+Description: Show your Facebook Page albums on your website. Load albums on any page by using the plugin short code.
+Version: 1.0-alpha
 Author: Dwainm
 Author URI: http://dwainm.wordpress.com
 */
-
-
-//todo 
-//- move all settings html to one file and remove the echo before calling settings.php
 
 /**
 *
 *  Load the needed scripts
 */
 
+function fbas_version(){
+	$plugin_version = '1.0-alpha';
+	return $plugin_version;
+
+}// end version
 
 function my_scripts_method() {
 
@@ -33,23 +34,19 @@ function my_scripts_method() {
 			$plugin_url = plugin_dir_url( __FILE__ );
 
 			//include javascript files
-    		wp_enqueue_script( 'jquery' );
-			wp_enqueue_script( 'lightbox', $plugin_url.'js/lightbox.js', array('jquery'), '0.4', true );
-			wp_enqueue_script( 'smooth_scroll',$plugin_url.'js/jquery.smooth-scroll.min.js', array('jquery'), '0.4', true );
-			wp_enqueue_script( 'facebook_albums_sync', $plugin_url.'js/facebook-album-sync.js', array('jquery'), '0.4', true  );
+			wp_enqueue_script( 'lightbox', $plugin_url.'js/lib/lightbox.js', array('jquery'), '0.4', true );
+			wp_enqueue_script( 'smooth_scroll',$plugin_url.'js/lib/jquery.smooth-scroll.min.js', array('jquery'), '0.4', true );
+			wp_enqueue_script( 'facebook_albums_sync', $plugin_url.'js/facebook-album-sync.js', array('jquery','underscore','backbone'), '0.4', true  );
 
 			// place this in the javascript of the page
 			wp_enqueue_style('lightbox_css',$plugin_url.'css/lightbox.css' );
 			wp_enqueue_style( '1140_ie',$plugin_url.'css/ie.css' );
 			wp_enqueue_style( 'fbalbumsync_mainstyle',$plugin_url.'css/fbasstyles.css' );
-			wp_enqueue_script('fbalbumsync_media_query_js',$plugin_url.'js/css3-mediaqueries.js' );
+			wp_enqueue_script('fbalbumsync_media_query_js',$plugin_url.'js/lib/css3-mediaqueries.js' );
 
-
-
-	
        }   
 	}
-}    
+} // end my_scripts_method     
 
 add_action('wp_enqueue_scripts', 'my_scripts_method'); 
 
@@ -63,20 +60,59 @@ function enque_view_scripts(){
 	
 	// $url contains the path to your plugin folder
 	$plugin_url = plugin_dir_url( __FILE__ );
+    wp_enqueue_script( 'fbas-react',$plugin_url.'js/lib/react/react.min.js', array(), fbas_version(), true );
 
 	if( all_albums_view() ){
-
-		wp_enqueue_script('fbas_all_albums_view',$plugin_url.'js/all-albums-view.js' );
+		// load the album model file that contains the logic for fetching albums from facebook.
+		wp_enqueue_script('fbas-model-album',$plugin_url.'js/models/album.js', array('jquery','underscore','backbone', 'fbas-react'), fbas_version() , true );
+		wp_enqueue_script('fbas_all_albums_view',$plugin_url.'js/views/all-albums.js', array('jquery','underscore','backbone', 'fbas-react'), '0.4', true );
 	
 	}else{
-		wp_enqueue_script('fbas_single_album_view',$plugin_url.'js/single-album-view.js' );
+		wp_enqueue_script('fbas_single_album_view',$plugin_url.'js/views/single-album.js', array('jquery','underscore','backbone', 'fbas-react'), '0.4', true );
 	}
 
 }
+//add_action( 'fbas_shortcode_after', 'enque_view_scripts');
 
+/**
+* This function is to use react in developer mode.
+* It prints out the jsx compiler and the jsx scripts.
+*/
+function print_dev_jsx_scripts(){
 
-add_action( 'fbas_shortcode_after', 'enque_view_scripts');
+	// $url contains the path to your plugin folder
+	$plugin_url = plugin_dir_url( __FILE__ );
 
+	// load the jsx compiler script
+	echo _fbas_generate_script( $plugin_url.'js/lib/react/react.js' );
+    echo _fbas_generate_script( $plugin_url.'js/lib/react/react-jsx.js' );
+    if( all_albums_view() ){
+		
+		// load the album model file that contains the logic for fetching albums from facebook.
+		echo _fbas_generate_script( $plugin_url.'js/models/album.js' );
+        echo _fbas_generate_script( $plugin_url.'js/views/all-albums.jsx', 'text/jsx' );
+	
+	}else{
+
+        echo _fbas_generate_script( $plugin_url.'js/models/photo.js' );
+        echo _fbas_generate_script( $plugin_url.'js/views/single-album.jsx', 'text/jsx' );
+
+		wp_enqueue_script('fbas_single_album_view',$plugin_url.'js/views/single-album.js', array('jquery','underscore','backbone', 'fbas-react'), '0.4', true );
+	}
+	
+}
+
+add_action( 'wp_footer', 'print_dev_jsx_scripts', 80);
+
+/**
+* Create a script tag for the given script url and type
+* only to be used in development. For product use wp_enqueue_script
+*/
+function _fbas_generate_script( $url, $type = 'text/javascript' ){
+
+	return "<script type=\"$type\" src=\"$url\"></script>";
+
+}
 
 /**
 *
@@ -88,14 +124,14 @@ function generate_localized_data($atts){
 	$data  = array( 'facebookPageName' => get_option('fbas_page') );
 
 	if( all_albums_view() ){	
-
-		//check if shortcode attributes excludeds any albums
-		if (array_key_exists('exclude', $atts)){
-			$exclude_csv_string = $atts['exclude'];
-		}
-
+		//
 		// create the array that will be localizaed
-		$data['exludeAlbums']  = explode(',', $exclude_csv_string );
+		//
+		if ( isset( $atts['exclude'] ) && array_key_exists('exclude', $atts ) ){
+			//check if shortcode attributes excludeds any albums
+			$exclude_csv_string = $atts['exclude'];
+			$data['exludeAlbums']  = explode(',', $exclude_csv_string );
+		}
 		$data['prettyPermalinks'] =   is_pretty_permalinks_on(true); //true tells the function to return string
 		$data['success'] = 'true'; 
 
@@ -129,23 +165,11 @@ add_action('fbas_shortcode_before','generate_localized_data');
 add_action('admin_menu', 'facebook_albums_sync_menu');
 
 function facebook_albums_sync_menu() {
-    //$pending = '<span class="update-plugins"><span class="pending-count">7</span></span>';
-	//add_menu_page('Facebook Album Sync', 'Facebook Album Sync'.$pending, 'manage_options', 'facebook_albums_sync', 'facebook_albums_sync_options');
+
 	add_options_page('Facebook Album Sync', 'Facebook Albums', 'manage_options', 'facebook_albums_sync', 'facebook_albums_sync_options');    
-    //add_submenu_page( 'facebook_albums_sync', 'Super Plugin', 'Settings', 'manage_options', 'super_plugin_unique_url', 'facebook_albums_sync_options');
     
 }
 
-function super_plugin_unique_url(){
-  	if (!current_user_can('manage_options'))  {
-		wp_die( __('You do not have sufficient permissions to access this page.') );
-	}
-	echo '<div class="wrap">';
-    echo '<h2>This is Settings Page</h2>';
-	echo '<p>Include PHP file for better readability of your code.</p>';
-	echo '</div>';
-
-}
 
 function facebook_albums_sync_options() {
 	if (!current_user_can('manage_options'))  {
@@ -153,7 +177,7 @@ function facebook_albums_sync_options() {
 	}
 	echo '<div class="wrap">';
     echo '<h2>Facebook Albums Sync Settings</h2>';
-    include('settings.php');
+    include('includes/settings.php');
 	echo '</div>';
 }
 
@@ -184,11 +208,11 @@ function fbalbumsync_func($atts) {
     if ( all_albums_view() ){
 
     	// show albums
-    	include('all_albums_view.php'); 
+    	include('templates/all-albums.php'); 
 
     }else{// show specific photos in an album
 
-    	include('single_album_view.php');
+    	include('templates/single-album.php');
 
     }
 
@@ -198,23 +222,6 @@ function fbalbumsync_func($atts) {
 add_shortcode('fbalbumsync', 'fbalbumsync_func');
 add_shortcode('fbalbumssync', 'fbalbumsync_func');
 add_shortcode('facbook_albums', 'fbalbumsync_func');
-
-
-/*
-shortocde for the next release:
-*/
-
-/*
-function single_album_view($id){
-	//localize data and add to hook somewher
-			$data['albumId'] = $atts['album'];
-			$data['singleAlbumShortcodeUsed'] = 'true' ;
-}
-
-add_shortcode('fbas_single_album', 'single_view_function');
-
-*/
-
 
 /**
 * add our var to the query

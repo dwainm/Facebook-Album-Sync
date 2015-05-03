@@ -2,49 +2,59 @@
 /* ! Layout for desktop version   */
 /* ============================== */
 
-	body {
-		
-	}
-	
+body {
+
+}
+
 .photothumblarge{
-height: 116px;
-width: 149px;
-background-color: #EEE;
+    height: 116px;
+    width: 149px;
+    background-color: #EEE;
 }
 
 .albumthumb{
-height: 116px;
-width: 149px;
-background-color: #EEE;
+    height: 116px;
+    width: 149px;
+    background-color: #EEE;
 }
 
 .photolink{
-border: 1px solid #CCC;
-display: inline-block;
-outline: none;
-padding: 4px;
-position: relative;
-vertical-align: bottom;
+    border: 1px solid #CCC;
+    display: inline-block;
+    outline: none;
+    padding: 4px;
+    position: relative;
+    vertical-align: bottom;
 }
 
 .albumlink{
-border: 1px solid #CCC;
-display: inline-block;
-outline: none;
-padding: 4px;
-position: relative;
-vertical-align: bottom;
+    border: 1px solid #CCC;
+    display: inline-block;
+    outline: none;
+    padding: 4px;
+    position: relative;
+    vertical-align: bottom;
+    width: 100%;
 }
 
 #fbloader{
-width: 32px;
-height: 32px;
-border: none;
-border-radius: 0;
-box-shadow: none;
-margin-left: 50%;
-text-align: center;
-background-image: url('../images/loading.gif');
+    padding: 5em;
+    position: absolute;
+    top: 10em;
+    left: 0;;
+    width: 200px;
+    height: 200px;
+    border: none;
+    border-radius: 100%;
+    box-shadow: none;
+    margin-left: 25%;
+    text-align: center;
+    background: rgba(139, 136, 136, 0.38) url('../images/loading.gif') no-repeat center;
+    z-index: 999;
+}
+
+#fbloader.hidden{
+     visibility: hidden;
 }
 
 /* ============================== */
@@ -52,50 +62,51 @@ background-image: url('../images/loading.gif');
 /* ============================== */
 
 #loader {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  width: 30px;
-  height: 25px;
-  margin: auto;
-  display: flex;
-  flex-flow: row no-wrap;
-  justify-content: center;
-  align-items: center;
+    z-index: 9999;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 30px;
+    height: 25px;
+    margin: auto;
+    display: flex;
+    flex-flow: row no-wrap;
+    justify-content: center;
+    align-items: center;
 }
 #loader.loaded .bar {
-  width: 5px;
-  height: 5px;
-  margin-right: 1px;
-  border-radius: 5px;
-  background: #456ba2;
-  flex: 1 5px;
+    width: 5px;
+    height: 5px;
+    margin-right: 1px;
+    border-radius: 5px;
+    background: #456ba2;
+    flex: 1 5px;
 }
 #loader.loaded .bar:last-child {
-  margin: 0;
+    margin: 0;
 }
 #loader.loaded .bar:nth-child(1) {
-  animation: load 0.3s ease-in-out 0.1s infinite alternate;
+    animation: load 0.3s ease-in-out 0.1s infinite alternate;
 }
 #loader.loaded .bar:nth-child(2) {
-  animation: load 0.3s ease-in-out 0.2s infinite alternate;
+    animation: load 0.3s ease-in-out 0.2s infinite alternate;
 }
 #loader.loaded .bar:nth-child(3) {
-  animation: load 0.3s ease-in-out 0.3s infinite alternate;
+    animation: load 0.3s ease-in-out 0.3s infinite alternate;
 }
 #loader.loaded .bar:nth-child(4) {
-  animation: load 0.3s ease-in-out 0.4s infinite alternate;
+    animation: load 0.3s ease-in-out 0.4s infinite alternate;
 }
 #loader.loaded .bar:nth-child(5) {
-  animation: load 0.3s ease-in-out 0.5s infinite alternate;
+    animation: load 0.3s ease-in-out 0.5s infinite alternate;
 }
 
 @keyframes load {
-  100% {
-    height: 25px;
-  }
+    100% {
+        height: 25px;
+    }
 }
 
 
@@ -109,81 +120,81 @@ html,body,div,span,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,addre
 /* ==================================================================================================================== */
 
 .container {
-padding-left: 20px;
-padding-right: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .row {
-width: 100%;
-margin: 0 auto 10px auto;
-overflow: hidden;
+    width: 100%;
+    margin: 0 auto 10px auto;
+    overflow: hidden;
 }
 
 .onecol, .twocol, .threecol, .fourcol, .fivecol, .sixcol, .sevencol, .eightcol, .ninecol, .tencol, .elevencol {
-margin-right: 3.8%;
-float: left;
-min-height: 1px;
+    margin-right: 3.8%;
+    float: left;
+    min-height: 1px;
 }
 
 .row .onecol {
-width: 4.85%;
+    width: 4.85%;
 }
 
 .row .twocol {
-width: 13.45%;
+    width: 13.45%;
 }
 
 .row .threecol {
-width: 159px;
+    width: 22%;
 }
 
 .row .fourcol {
-width: 30.75%;
+    width: 30.75%;
 }
 
 .row .fivecol {
-width: 39.45%;
+    width: 39.45%;
 }
 
 .row .sixcol {
-width: 48%;
+    width: 48%;
 }
 
 .row .sevencol {
-width: 56.75%;
+    width: 56.75%;
 }
 
 .row .eightcol {
-width: 65.4%;
+    width: 65.4%;
 }
 
 .row .ninecol {
-width: 74.05%;
+    width: 74.05%;
 }
 
 .row .tencol {
-width: 82.7%;
+    width: 82.7%;
 }
 
 .row .elevencol {
-width: 91.35%;
+    width: 91.35%;
 }
 
 .row .twelvecol {
-width: 100%;
-float: left;
+    width: 100%;
+    float: left;
 }
 
 .last {
-margin-right: 0px;
+    margin-right: 0px;
 }
 
 img, object, embed {
-max-width: 100%;
+    max-width: 100%;
 }
 
 img {
-	height: auto;
+    height: auto;
 }
 
 
@@ -191,40 +202,40 @@ img {
 
 @media only screen and (max-width: 1023px) {
 
-	body {
-	font-size: 0.8em;
-	line-height: 1.5em;
-	}
-	
-	}
+    body {
+        font-size: 0.8em;
+        line-height: 1.5em;
+    }
+
+}
 
 
 /* Mobile */
 
 @media handheld, only screen and (max-width: 767px) {
 
-	body {
-	font-size: 16px;
-	-webkit-text-size-adjust: none;
-	}
-	
-	.row, body, .container {
-	width: 100%;
-	min-width: 0;
-	margin-left: 0px;
-	margin-right: 0px;
-	padding-left: 0px;
-	padding-right: 0px;
-	}
-	
-	.row .onecol, .row .twocol, .row .threecol, .row .fourcol, .row .fivecol, .row .sixcol, .row .sevencol, .row .eightcol, .row .ninecol, .row .tencol, .row .elevencol, .row .twelvecol {
-	width: auto;
-	float: none;
-	margin-left: 0px;
-	margin-right: 0px;
-	padding-left: 20px;
-	padding-right: 20px;
-	}
+    body {
+        font-size: 16px;
+        -webkit-text-size-adjust: none;
+    }
+
+    .row, body, .container {
+        width: 100%;
+        min-width: 0;
+        margin-left: 0px;
+        margin-right: 0px;
+        padding-left: 0px;
+        padding-right: 0px;
+    }
+
+    .row .onecol, .row .twocol, .row .threecol, .row .fourcol, .row .fivecol, .row .sixcol, .row .sevencol, .row .eightcol, .row .ninecol, .row .tencol, .row .elevencol, .row .twelvecol {
+        width: auto;
+        float: none;
+        margin-left: 0px;
+        margin-right: 0px;
+        padding-left: 20px;
+        padding-right: 20px;
+    }
 
 }
 
@@ -237,9 +248,9 @@ img {
 
 @media handheld, only screen and (max-width: 767px) {
 
-	body {
-		
-	}
+    body {
+
+    }
 
 }
 
@@ -248,11 +259,64 @@ img {
 /* ! Provide higher res assets for iPhone 4   */
 /* ========================================== */
 
-@media only screen and (-webkit-min-device-pixel-ratio: 2) { 
+@media only screen and (-webkit-min-device-pixel-ratio: 2) {
 
-/*	.logo {
-		background: url(logo2x.jpg) no-repeat;
-		background-size: 212px 303px;
-	}*/
+    /*	.logo {
+            background: url(logo2x.jpg) no-repeat;
+            background-size: 212px 303px;
+        }*/
 
+}
+
+
+#fbalbumsync ul li{
+    list-style-type: none;
+}
+
+
+#fbalbumsync [class*='col-'] {
+    float: left;
+    padding-bottom: 2%;
+}
+
+/*Reads like this take up 1 column of 4 */
+
+#fbalbumsync li.col-1-4{
+    width: 25%;
+    padding-right: 2%;
+}
+#fbalbumsync li.col-1-4.last+li{
+    clear: left;
+}
+
+#fbalbumsync li.col-2-4{
+    width: 40%;
+    padding-right: 4%;
+}
+
+#fbalbumsync li.col-3-4{
+    width: 74%;
+    padding-right: 3%;
+}
+#fbalbumsync li.col-4-4{
+    width: 98%;
+    padding-right: 2%;
+}
+
+.fbalbumsync:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+#fbalbumsync li a {
+    height: 100%;
+    width: 100%;
+}
+
+#fbalbumsync li img {
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 100px;
+    width: 100%;
 }
