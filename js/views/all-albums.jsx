@@ -18,7 +18,7 @@
         excludeAlbums[albumid] = excludeAlbums[albumid].trim();
     }
 
-    var apiUrl = "https://graph.facebook.com/" +  facbookAlbumsSync.facebookPageName + "/albums/"
+    var apiUrl = "https://graph.facebook.com/" +  facbookAlbumsSync.facebookPageName + "/albums/";
 
     // setup new collection to hold all albums
     allAlbums = new fbas.AlbumCollection();
