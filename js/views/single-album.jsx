@@ -39,22 +39,10 @@
         },
 
         render: function(){
-            var images = this.state.get('images');
-
-            // get the image this is smaller that 500 and large than 300
-            var image = images[ images.length-1 ];
-            var largestImageSrc = images[0].source;
-            _.each( images, function( currentImage ){
-                if( currentImage.width > 300 && currentImage.width < 500 ){
-                    image = currentImage;
-                }
-            } );
-
             var imageClass = 'fbas-image photothumblarge';
-            var imageStyle = { backgroundSize: 'cover', backgroundImage: 'url("'+ image.source +'")' };
-
+            var imageStyle = { backgroundSize: 'cover', backgroundImage: 'url("'+ this.state.standardImage.source +'")' };
             return(
-                <a className="photolink" href={largestImageSrc} data-lightbox="fbgallery" >
+                <a className="photolink" href={this.state.largestImage.source } data-lightbox="fbgallery" >
                     <img src='' style={imageStyle} className={imageClass} />
                 </a>
             );

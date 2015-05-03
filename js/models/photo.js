@@ -11,7 +11,16 @@
 
     fbas.PhotoModel = Backbone.Model.extend({
         initialize: function( newData, collection ){
+            var images = this.get('images');
 
+            this.largestImage = images[ 0 ];
+
+            this.standardImage = images[ images.length-1 ];
+            _.each( images, function( currentImage ){
+                if( currentImage.width > 300 && currentImage.width < 500 ){
+                    this.standardImage = currentImage;
+                }
+            } );
         },
     });
 
