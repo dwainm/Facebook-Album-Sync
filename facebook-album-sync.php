@@ -93,6 +93,10 @@ function print_dev_jsx_scripts(){
         echo _fbas_generate_script( $plugin_url.'js/views/all-albums.jsx', 'text/jsx' );
 	
 	}else{
+
+        echo _fbas_generate_script( $plugin_url.'js/models/photo.js' );
+        echo _fbas_generate_script( $plugin_url.'js/views/single-album.jsx', 'text/jsx' );
+
 		wp_enqueue_script('fbas_single_album_view',$plugin_url.'js/views/single-album.js', array('jquery','underscore','backbone', 'fbas-react'), '0.4', true );
 	}
 	

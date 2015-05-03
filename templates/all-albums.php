@@ -5,5 +5,4 @@
 */
 ?>
 <div id="fbalbumsync" class="container">
-
 </div>
