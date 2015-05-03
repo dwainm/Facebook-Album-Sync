@@ -120,11 +120,16 @@
                 var loaderClass = 'hidden';
             }
 
+
             return (
                 <ul>
                 {[ <div className={loaderClass} id='fbloader'></div> ,
                     this.state.models.map( function(album, index ) {
-                        return( <li  key={album.attributes.id} id={album.attributes.id} className="col-1-4" >
+                        var noOfColumns = 4;
+                        var res = ( index + 1 ) % noOfColumns;
+                        var last = 0==res ? 'last': '';
+                        var liClass= "col-1-4 " + last;
+                        return( <li  key={album.attributes.id} id={album.attributes.id} className={liClass} >
                                     <AlbumComponent albumModel={album} />
                                 </li>)
 

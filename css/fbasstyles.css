@@ -37,14 +37,18 @@ body {
 }
 
 #fbloader{
-    width: 32px;
-    height: 32px;
+    padding: 5em;
+    position: absolute;
+    top: 10em;
+    left: 0;;
+    width: 50%;
+    height: 50px;
     border: none;
     border-radius: 0;
     box-shadow: none;
-    margin-left: 50%;
+    margin-left: 25%;
     text-align: center;
-    background-image: url('../images/loading.gif');
+    background: rgba(139, 136, 136, 0.38) url('../images/loading.gif') no-repeat center;
 }
 
 #fbloader.hidden{
@@ -273,9 +277,13 @@ img {
 }
 
 /*Reads like this take up 1 column of 4 */
+
 #fbalbumsync li.col-1-4{
     width: 25%;
     padding-right: 2%;
+}
+#fbalbumsync li.col-1-4.last+li{
+    clear: left;
 }
 
 #fbalbumsync li.col-2-4{
@@ -296,4 +304,11 @@ img {
     content: "";
     display: table;
     clear: both;
+}
+
+#fbalbumsync li img{
+    -webkit-transition: opacity 2s ease-in;
+    -moz-transition: opacity 2s ease-in;
+    -o-transition: opacity 2s ease-in;
+    -ms-transition: opacity 2s ease-in;
 }
