@@ -3,17 +3,15 @@
 Plugin Name: Facebook Album Sync
 Plugin URI: http://miiweb.net/plugins/facebook-album-sync
 Description: Sync your Facebook Page albums with your WordPress site and load albums on any page by using short codes.
-Version: 0.3
+Version: 1.0
 Author: Dwainm
 Author URI: http://dwainm.wordpress.com
 */
 
-
-//todo 
-//- move all settings html to one file and remove the echo before calling settings.php
+// Load the plugin settings scripts
+include_once('settings.php');
 
 /**
-*
 *  Load the needed scripts
 */
 
@@ -44,9 +42,6 @@ function my_scripts_method() {
 			wp_enqueue_style( 'fbalbumsync_mainstyle',$plugin_url.'css/fbasstyles.css' );
 			wp_enqueue_script('fbalbumsync_media_query_js',$plugin_url.'js/css3-mediaqueries.js' );
 
-
-
-	
        }   
 	}
 }    
@@ -83,6 +78,8 @@ add_action( 'fbas_shortcode_after', 'enque_view_scripts');
 *  generate data for the licalization the variable needed 
 */
 
+add_action('fbas_shortcode_before','generate_localized_data');
+
 function generate_localized_data($atts){
 
 	$data  = array( 'facebookPageName' => get_option('fbas_page') );
@@ -116,47 +113,11 @@ function generate_localized_data($atts){
 
 	}
 
-	// localize data based ont he page the users viewing
+	// localize data based on the page the users viewing
 
 	wp_localize_script( 'facebook_albums_sync' , 'facbookAlbumsSync', $data);
 
 }
-
-
-add_action('fbas_shortcode_before','generate_localized_data');
-
-///
-add_action('admin_menu', 'facebook_albums_sync_menu');
-
-function facebook_albums_sync_menu() {
-    //$pending = '<span class="update-plugins"><span class="pending-count">7</span></span>';
-	//add_menu_page('Facebook Album Sync', 'Facebook Album Sync'.$pending, 'manage_options', 'facebook_albums_sync', 'facebook_albums_sync_options');
-	add_options_page('Facebook Album Sync', 'Facebook Albums', 'manage_options', 'facebook_albums_sync', 'facebook_albums_sync_options');    
-    //add_submenu_page( 'facebook_albums_sync', 'Super Plugin', 'Settings', 'manage_options', 'super_plugin_unique_url', 'facebook_albums_sync_options');
-    
-}
-
-function super_plugin_unique_url(){
-  	if (!current_user_can('manage_options'))  {
-		wp_die( __('You do not have sufficient permissions to access this page.') );
-	}
-	echo '<div class="wrap">';
-    echo '<h2>This is Settings Page</h2>';
-	echo '<p>Include PHP file for better readability of your code.</p>';
-	echo '</div>';
-
-}
-
-function facebook_albums_sync_options() {
-	if (!current_user_can('manage_options'))  {
-		wp_die( __('You do not have sufficient permissions to access this page.') );
-	}
-	echo '<div class="wrap">';
-    echo '<h2>Facebook Albums Sync Settings</h2>';
-    include('settings.php');
-	echo '</div>';
-}
-
 
 /**
 * the shortcode calls this function fromt the front end
@@ -165,7 +126,7 @@ function facebook_albums_sync_options() {
 * @since 0.1 
 */
 
-function fbalbumsync_func($atts) {
+function fbas_shortcode_render($atts) {
 
 	// alow function to hook in at this point
 	do_action('fbas_shortcode_before', $atts);
@@ -195,26 +156,9 @@ function fbalbumsync_func($atts) {
     do_action('fbas_shortcode_after');
 }
 
-add_shortcode('fbalbumsync', 'fbalbumsync_func');
-add_shortcode('fbalbumssync', 'fbalbumsync_func');
-add_shortcode('facbook_albums', 'fbalbumsync_func');
-
-
-/*
-shortocde for the next release:
-*/
-
-/*
-function single_album_view($id){
-	//localize data and add to hook somewher
-			$data['albumId'] = $atts['album'];
-			$data['singleAlbumShortcodeUsed'] = 'true' ;
-}
-
-add_shortcode('fbas_single_album', 'single_view_function');
-
-*/
-
+add_shortcode('fbalbumsync', 'fbas_shortcode_render');
+add_shortcode('fbalbumssync', 'fbas_shortcode_render');
+add_shortcode('facbook_albums', 'fbas_shortcode_render');
 
 /**
 * add our var to the query
@@ -250,16 +194,15 @@ function all_albums_view(){
 */
 function is_pretty_permalinks_on ($return_as_string=false){
 
-	    global $wp_rewrite;
+    global $wp_rewrite;
 
-		$result = false;
+    $result = false;
 
-		if ($wp_rewrite->permalink_structure == ''){
-			$result =  $return_as_string? 'false' : false; //we are using ?page_id
-		}else{
-			$result = $return_as_string? 'true' : true;
-		}
+    if ($wp_rewrite->permalink_structure == ''){
+        $result =  $return_as_string? 'false' : false; //we are using ?page_id
+    }else{
+        $result = $return_as_string? 'true' : true;
+    }
 
-		return $result;
-
+    return $result;
 }
