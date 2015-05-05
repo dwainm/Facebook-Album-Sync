@@ -2,14 +2,16 @@
 /*
 Plugin Name: Facebook Album Sync
 Plugin URI: http://miiweb.net/plugins/facebook-album-sync
-Description: Show your Facebook Page albums on your website. Load albums on any page by using the plugin short code.
-Version: 1.0-alpha
+Description: Sync your Facebook Page albums with your WordPress site and load albums on any page by using short codes.
+Version: 1.0
 Author: Dwainm
 Author URI: http://dwainm.wordpress.com
 */
 
+// Load the plugin settings scripts
+include_once('includes/settings.php');
+
 /**
-*
 *  Load the needed scripts
 */
 
@@ -119,6 +121,8 @@ function _fbas_generate_script( $url, $type = 'text/javascript' ){
 *  generate data for the licalization the variable needed 
 */
 
+add_action('fbas_shortcode_before','generate_localized_data');
+
 function generate_localized_data($atts){
 
 	$data  = array( 'facebookPageName' => get_option('fbas_page') );
@@ -152,35 +156,11 @@ function generate_localized_data($atts){
 
 	}
 
-	// localize data based ont he page the users viewing
+	// localize data based on the page the users viewing
 
 	wp_localize_script( 'facebook_albums_sync' , 'facbookAlbumsSync', $data);
 
 }
-
-
-add_action('fbas_shortcode_before','generate_localized_data');
-
-///
-add_action('admin_menu', 'facebook_albums_sync_menu');
-
-function facebook_albums_sync_menu() {
-
-	add_options_page('Facebook Album Sync', 'Facebook Albums', 'manage_options', 'facebook_albums_sync', 'facebook_albums_sync_options');    
-    
-}
-
-
-function facebook_albums_sync_options() {
-	if (!current_user_can('manage_options'))  {
-		wp_die( __('You do not have sufficient permissions to access this page.') );
-	}
-	echo '<div class="wrap">';
-    echo '<h2>Facebook Albums Sync Settings</h2>';
-    include('includes/settings.php');
-	echo '</div>';
-}
-
 
 /**
 * the shortcode calls this function fromt the front end
@@ -189,7 +169,7 @@ function facebook_albums_sync_options() {
 * @since 0.1 
 */
 
-function fbalbumsync_func($atts) {
+function fbas_shortcode_render($atts) {
 
 	// alow function to hook in at this point
 	do_action('fbas_shortcode_before', $atts);
@@ -219,9 +199,9 @@ function fbalbumsync_func($atts) {
     do_action('fbas_shortcode_after');
 }
 
-add_shortcode('fbalbumsync', 'fbalbumsync_func');
-add_shortcode('fbalbumssync', 'fbalbumsync_func');
-add_shortcode('facbook_albums', 'fbalbumsync_func');
+add_shortcode('fbalbumsync', 'fbas_shortcode_render');
+add_shortcode('fbalbumssync', 'fbas_shortcode_render');
+add_shortcode('facbook_albums', 'fbas_shortcode_render');
 
 /**
 * add our var to the query
@@ -257,16 +237,15 @@ function all_albums_view(){
 */
 function is_pretty_permalinks_on ($return_as_string=false){
 
-	    global $wp_rewrite;
+    global $wp_rewrite;
 
-		$result = false;
+    $result = false;
 
-		if ($wp_rewrite->permalink_structure == ''){
-			$result =  $return_as_string? 'false' : false; //we are using ?page_id
-		}else{
-			$result = $return_as_string? 'true' : true;
-		}
+    if ($wp_rewrite->permalink_structure == ''){
+        $result =  $return_as_string? 'false' : false; //we are using ?page_id
+    }else{
+        $result = $return_as_string? 'true' : true;
+    }
 
-		return $result;
-
+    return $result;
 }
