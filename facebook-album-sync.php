@@ -31,7 +31,6 @@ function my_scripts_method() {
         	 stripos($post->post_content, '[facbook_albums')!==FALSE || 
         	 stripos($post->post_content, '[fbalbumssync')!==FALSE 		){
 
-
 			// $url contains the path to your plugin folder
 			$plugin_url = plugin_dir_url( __FILE__ );
 
@@ -50,15 +49,15 @@ function my_scripts_method() {
 	}
 } // end my_scripts_method     
 
-add_action('wp_enqueue_scripts', 'my_scripts_method'); 
+add_action('wp_enqueue_scripts', 'my_scripts_method');
+
 
 
 /**
-*
-*  enqueu plugin js in the footer dependant on which page we're on
+ *  enqueue plugin js in the footer dependant on which page we're on.
+ *  This runs in production when when SCRIPT_DEBUG global is disabled.
 */
-
-function enque_view_scripts(){
+function enqueue_view_scripts(){
 	
 	// $url contains the path to your plugin folder
 	$plugin_url = plugin_dir_url( __FILE__ );
@@ -70,41 +69,48 @@ function enque_view_scripts(){
 		wp_enqueue_script('fbas_all_albums_view',$plugin_url.'js/views/all-albums.js', array('jquery','underscore','backbone', 'fbas-react'), '0.4', true );
 	
 	}else{
+        wp_enqueue_script('fbas-model-photo',$plugin_url.'js/models/photo.js', array('jquery','underscore','backbone', 'fbas-react'), fbas_version() , true );
 		wp_enqueue_script('fbas_single_album_view',$plugin_url.'js/views/single-album.js', array('jquery','underscore','backbone', 'fbas-react'), '0.4', true );
 	}
 
 }
-//add_action( 'fbas_shortcode_after', 'enque_view_scripts');
+add_action( 'fbas_shortcode_after', 'enqueue_view_scripts');
 
 /**
-* This function is to use react in developer mode.
-* It prints out the jsx compiler and the jsx scripts.
+* This function is to use react in developer mode, when SCRIPT_DEBUG global is
+ * defined. It prints out the jsx compiler and the jsx scripts.
 */
+add_action( 'wp_footer', 'print_dev_jsx_scripts', 80);
+
 function print_dev_jsx_scripts(){
 
 	// $url contains the path to your plugin folder
 	$plugin_url = plugin_dir_url( __FILE__ );
 
-	// load the jsx compiler script
-	echo _fbas_generate_script( $plugin_url.'js/lib/react/react.js' );
-    echo _fbas_generate_script( $plugin_url.'js/lib/react/react-jsx.js' );
-    if( all_albums_view() ){
-		
-		// load the album model file that contains the logic for fetching albums from facebook.
-		echo _fbas_generate_script( $plugin_url.'js/models/album.js' );
-        echo _fbas_generate_script( $plugin_url.'js/views/all-albums.jsx', 'text/jsx' );
-	
-	}else{
+    // Load Developer Scripts
+    if( defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ){
 
-        echo _fbas_generate_script( $plugin_url.'js/models/photo.js' );
-        echo _fbas_generate_script( $plugin_url.'js/views/single-album.jsx', 'text/jsx' );
+        // load the jsx compiler script
+        echo _fbas_generate_script( $plugin_url.'js/lib/react/react.js' );
+        echo _fbas_generate_script( $plugin_url.'js/lib/react/react-jsx.js' );
+        if( all_albums_view() ){
 
-		wp_enqueue_script('fbas_single_album_view',$plugin_url.'js/views/single-album.js', array('jquery','underscore','backbone', 'fbas-react'), '0.4', true );
-	}
-	
+            // load the album model file that contains the logic for fetching albums from facebook.
+            echo _fbas_generate_script( $plugin_url.'js/models/album.js' );
+            echo _fbas_generate_script( $plugin_url.'js/views/all-albums.jsx', 'text/jsx' );
+
+        }else{
+
+            echo _fbas_generate_script( $plugin_url.'js/models/photo.js' );
+            echo _fbas_generate_script( $plugin_url.'js/views/single-album.jsx', 'text/jsx' );
+
+            wp_enqueue_script('fbas_single_album_view',$plugin_url.'js/views/single-album.js', array('jquery','underscore','backbone', 'fbas-react'), '0.4', true );
+        }
+
+    }
 }
 
-add_action( 'wp_footer', 'print_dev_jsx_scripts', 80);
+
 
 /**
 * Create a script tag for the given script url and type
