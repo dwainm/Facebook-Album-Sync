@@ -1,6 +1,5 @@
 === Plugin Name ===
 Contributors: dwainm
-Donate link: http://dwainm.wordpress.com/donate/
 Tags: Facebook albums,Facebook gallery
 Requires at least: 4.2.2
 Tested up to: 4.2.2
@@ -88,7 +87,6 @@ You can also submit issues on github [https://github.com/dwainm/Facebook-Albums-
 * Dev - use react views for faster ui updates and move data logic into separate model file.
 * Dev - organize file structure
 * Dev - use WP settings API
-
 
 = 0.4 =
 * Feature - Added aliasses for the albums shortcode for easier useage: [facbook_albums] and [fbalbumssync]
