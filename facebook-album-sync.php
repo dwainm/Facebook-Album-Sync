@@ -16,11 +16,9 @@ include_once('includes/settings.php');
 /**
 *  Load the needed scripts
 */
-
 function fbas_version(){
-	$plugin_version = '1.0-alpha';
+	$plugin_version = '0.5';
 	return $plugin_version;
-
 }// end version
 
 function my_scripts_method() {
