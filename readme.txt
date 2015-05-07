@@ -2,9 +2,9 @@
 Contributors: dwainm
 Donate link: http://dwainm.wordpress.com/donate/
 Tags: Facebook albums,Facebook gallery
-Requires at least: 3.X
-Tested up to: 3.5.1
-Stable tag: 0.3
+Requires at least: 4.2.2
+Tested up to: 4.2.2
+Stable tag: 0.5
 License: GPLv2 or later
 
 
@@ -80,6 +80,15 @@ You can also submit issues on github [https://github.com/dwainm/Facebook-Albums-
 1. Will be uploaded.
 
 == Changelog ==
+
+= 0.5 =
+* Fix - Loading duplicate albums
+* Fix - Problem with more tha 18 albums
+* Fix - Slow loading times
+* Dev - use react views for faster ui updates and move data logic into separate model file.
+* Dev - organize file structure
+* Dev - use WP settings API
+
 
 = 0.4 =
 * Feature - Added aliasses for the albums shortcode for easier useage: [facbook_albums] and [fbalbumssync]
