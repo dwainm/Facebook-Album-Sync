@@ -79,13 +79,14 @@
         /**
          * @returns XML
          */
-           // <img class=\"albumthumb\" src=\""+ imgsrc +" \" /></a><br/><a class=\"albumlinktitle\"  href=\""+photoslink+ "\">"+ albumname +"</a></div>";
         render: function(){
             var albumStyle = { backgroundImage: 'url("'+this.state.get('photoUrl')+'")' };
             var linkToAlbumPage = document.URL+"?fbasid=" + this.state.id;
-           return(  <a className="albumlink" href={linkToAlbumPage} ><img  key={this.state.id} style={albumStyle}  /> </a>);
-        },
-
+           return(  <a className="albumlink" href={linkToAlbumPage} >
+                <img  key={this.state.id} style={albumStyle}  />
+                <div className="album-name"> { this.state.attributes.name } </div>
+           </a>);
+        } // end render
     });
 
     /**

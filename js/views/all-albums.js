@@ -79,13 +79,14 @@
         /**
          * @returns XML
          */
-           // <img class=\"albumthumb\" src=\""+ imgsrc +" \" /></a><br/><a class=\"albumlinktitle\"  href=\""+photoslink+ "\">"+ albumname +"</a></div>";
         render: function(){
             var albumStyle = { backgroundImage: 'url("'+this.state.get('photoUrl')+'")' };
             var linkToAlbumPage = document.URL+"?fbasid=" + this.state.id;
-           return(  React.createElement("a", {className: "albumlink", href: linkToAlbumPage}, React.createElement("img", {key: this.state.id, style: albumStyle}), " "));
-        },
-
+           return(  React.createElement("a", {className: "albumlink", href: linkToAlbumPage}, 
+                React.createElement("img", {key: this.state.id, style: albumStyle}), 
+                React.createElement("div", {className: "album-name"}, " ",  this.state.attributes.name, " ")
+           ));
+        } // end render
     });
 
     /**

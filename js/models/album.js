@@ -117,7 +117,6 @@
 
                 // store the album data
                 _.each(  apiJson.data ,function( albumJson, index ){
-
                     var model = new fbas.AlbumModel(albumJson, thisCollection );
                     thisCollection.add( model );
 

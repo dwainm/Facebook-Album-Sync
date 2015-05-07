@@ -27,6 +27,8 @@ body {
     vertical-align: bottom;
 }
 
+
+
 .albumlink{
     border: 1px solid #CCC;
     display: inline-block;
@@ -35,6 +37,10 @@ body {
     position: relative;
     vertical-align: bottom;
     width: 100%;
+}
+
+.albumlink:hover{
+    border-bottom:1px solid #CCC !important;
 }
 
 #fbloader{
@@ -54,7 +60,7 @@ body {
 }
 
 #fbloader.hidden{
-     visibility: hidden;
+    visibility: hidden;
 }
 
 /* ============================== */
@@ -318,5 +324,12 @@ img {
     background-size: cover;
     background-repeat: no-repeat;
     height: 100px;
+    width: 100%;
+}
+
+#fbalbumsync li .album-name{
+    padding-top: 4%;
+    font-size: 0.7em !important;
+    text-align: center;
     width: 100%;
 }
