@@ -103,7 +103,7 @@
                 //thisCollection.removeFromLoadingQueue( thisCollection );
                 // Check if the api has more albums avaialbe then fetch them
                 if( ! _.isEmpty( apiJson.paging.next) ){
-                    thisCollection.fetchAlbums(  apiJson.paging.next );
+                    thisCollection.fetchPhotos(  apiJson.paging.next );
                 }
 
                 thisCollection.isLoading = false;
