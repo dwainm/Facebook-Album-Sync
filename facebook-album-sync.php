@@ -1,13 +1,13 @@
 <?php
 /**
- * Plugin Name: Facebook Album Sync
- * Plugin URI: https://github.com/dwainm/Facebook-Album-Sync
- * Description: Sync your Facebook Page albums with your WordPress site and load albums on any page by using short codes.
- * Version: 0.5
- * Author: Dwain Maralack
- * Author URI: http://dwainm.com
- * License: GPL2
- * Network: true
+ Plugin Name: Facebook Album Sync
+ Plugin URI: https://github.com/dwainm/Facebook-Album-Sync
+ Description: Sync your Facebook Page albums with your WordPress site and load albums on any page by using short codes.
+ Version: 0.5
+ Author: Dwain Maralack
+ Author URI: http://dwainm.com
+ License: GPL2
+ Network: true
  */
 
 // Load the plugin settings scripts
