@@ -58,7 +58,10 @@ add_action('wp_enqueue_scripts', 'my_scripts_method');
  *  This runs in production when when SCRIPT_DEBUG global is disabled.
 */
 function enqueue_view_scripts(){
-	
+
+    if( defined('SCRIPT_DEBUG') && SCRIPT_DEBUG ){
+        return;
+    }
 	// $url contains the path to your plugin folder
 	$plugin_url = plugin_dir_url( __FILE__ );
     wp_enqueue_script( 'fbas-react',$plugin_url.'js/lib/react/react.min.js', array(), fbas_version(), true );
