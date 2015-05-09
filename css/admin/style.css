@@ -1,0 +1,6 @@
+input.error{
+    border: solid 1px rgb(208, 7, 7);
+}
+input.success {
+    border: solid 1px rgb(127, 208, 7);
+}

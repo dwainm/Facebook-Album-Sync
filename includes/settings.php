@@ -73,6 +73,7 @@ function fbas_settings_init(  ) {
 function fbas_text_field_page_render( ) {
     ?>
     <strong>https://facebook.com/</strong><input type='text' name='fbas_page' value='<?php echo get_option( 'fbas_page' ); ?>'>
+    <img id="fbas_loading" class="hidden" src="<?php echo fbas_get_plugin_url().'images/busy.gif' ?>" >
 <?php
 }
 
@@ -117,4 +118,5 @@ function fbas_add_settings_js( $hook ){
         return;
     }
     wp_enqueue_script('fbas_settings_js', fbas_get_plugin_url().'js/admin/settings.js',array('jquery','underscore','backbone'), fbas_version(), true );
+    wp_enqueue_style('fbas_settings_css', fbas_get_plugin_url().'css/admin/style.css');
 }// end add settings
