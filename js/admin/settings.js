@@ -12,13 +12,17 @@
         e.preventDefault();
         var loadingImg = $('#fbas_loading');
         var pageNameField = $('[name=fbas_page]');
+        var submit = $( '#submit' );
+
 
         // show the loading icon
+        submit.attr('disabled', 'disabled');
         loadingImg.removeClass('hidden');
 
         if( _.isEmpty( pageNameField.val() ) ){
             loadingImg.addClass('hidden');
             pageNameField.addClass('error');
+            submit.removeAttr('disabled');
             return false;
         }
 
@@ -42,6 +46,7 @@
             }
 
             loadingImg.addClass('hidden');
+            submit.removeAttr('disabled');
         });
 
 
