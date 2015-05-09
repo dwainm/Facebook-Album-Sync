@@ -17,9 +17,19 @@ include_once('includes/settings.php');
 *  Load the needed scripts
 */
 function fbas_version(){
-	$plugin_version = '0.5';
+	$plugin_version = '0.6';
 	return $plugin_version;
 }// end version
+
+/**
+ * Return the plugin url
+ *
+ * @since 0.6
+ */
+function fbas_get_plugin_url(){
+    // $url contains the path to your plugin folder
+    return plugin_dir_url( __FILE__ );
+}//
 
 function my_scripts_method() {
 

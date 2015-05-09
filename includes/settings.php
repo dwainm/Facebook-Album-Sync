@@ -18,8 +18,7 @@
 
 add_action('admin_menu', 'fbas_add_settings_menu');
 add_action( 'admin_init', 'fbas_settings_init' );
-
-
+add_action( 'admin_enqueue_scripts', 'fbas_add_settings_js' );
 //****
 //
 //
@@ -88,7 +87,7 @@ function fbas_general_settings_section_callback(  ) {
  * Showing the options page
  * FBAS options page call back, registered when adding the sub menu.
  *
- * @since 1.0
+ * @since 0.5
  */
 function fbas_options_page(  ) {
 
@@ -105,5 +104,17 @@ function fbas_options_page(  ) {
 
     </form>
 <?php
-
 } // fbas_options_page
+
+/**
+ * Load the settings javascript file
+ *
+ * @since 0.6
+ * @param $hook
+ */
+function fbas_add_settings_js( $hook ){
+    if( 'settings_page_facebook_albums_sync' != $hook ){
+        return;
+    }
+    wp_enqueue_script('fbas_settings_js', fbas_get_plugin_url().'js/admin/settings.js',array('jquery','underscore','backbone'), fbas_version(), true );
+}// end add settings
