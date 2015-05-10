@@ -140,9 +140,9 @@ function _fbas_generate_script( $url, $type = 'text/javascript' ){
 *  generate data for the licalization the variable needed 
 */
 
-add_action('fbas_shortcode_before','generate_localized_data');
+add_action('fbas_shortcode_before','fbas_generate_localized_data');
 
-function generate_localized_data($atts){
+function fbas_generate_localized_data($atts = array() ){
 
 	$data  = array( 'facebookPageName' => get_option('fbas_page') );
 
@@ -150,11 +150,27 @@ function generate_localized_data($atts){
 		//
 		// create the array that will be localizaed
 		//
+
+        // exclude albums
+        $excluded_setting = get_option( 'fbas_excluded_ids' );
 		if ( isset( $atts['exclude'] ) && array_key_exists('exclude', $atts ) ){
+
 			//check if shortcode attributes excludeds any albums
 			$exclude_csv_string = $atts['exclude'];
 			$data['exludeAlbums']  = explode(',', $exclude_csv_string );
-		}
+
+		}elseif( ! empty( $excluded_setting ) ){
+
+            if( is_array( $excluded_setting )  ){
+                foreach( $excluded_setting  as $id => $setting ){
+                    $data['exludeAlbums'][] = $id;
+                }
+            }else{
+                $data['exludeAlbums'][] =  $excluded_setting;
+            }
+
+
+        }
 		$data['prettyPermalinks'] =   is_pretty_permalinks_on(true); //true tells the function to return string
 		$data['success'] = 'true'; 
 
@@ -178,6 +194,7 @@ function generate_localized_data($atts){
 	// localize data based on the page the users viewing
 
 	wp_localize_script( 'facebook_albums_sync' , 'facbookAlbumsSync', $data);
+    return $data;
 
 }
 

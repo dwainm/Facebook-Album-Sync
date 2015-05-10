@@ -14,14 +14,28 @@
         initialize: function( newData, collection ){
             if( this.attributes.cover_photo ) {
 
-                // notify the collection that this model is loading
-                collection.addToLoadingQueue( this );
-                var  coverPhotoApiUrl = 'https://graph.facebook.com/' + this.attributes.cover_photo
-                $.ajax({
-                    dataType: 'jsonp',
-                    url: coverPhotoApiUrl,
-                    type: 'GET'
-                }).done( _.bind( this.processCoverPhoto, this) );
+                var fbas_settings =  facbookAlbumsSync || {};
+                var excluded = [];
+                if( ! _.isEmpty( fbas_settings ) ){
+                    excluded = fbas_settings.exludeAlbums || [];
+                }
+
+                if( -1 == _.indexOf( excluded , parseInt( this.get('id') ) ) ) {
+
+                    // notify the collection that this model is loading
+                    collection.addToLoadingQueue( this );
+                    var  coverPhotoApiUrl = 'https://graph.facebook.com/' + this.attributes.cover_photo;
+                    $.ajax({
+                        dataType: 'jsonp',
+                        url: coverPhotoApiUrl,
+                        type: 'GET'
+                    }).done(_.bind(this.processCoverPhoto, this));
+
+                }else{
+                    // this album has been excluded
+                    this.set('excluded', true);
+
+                }
 
             }
         },
