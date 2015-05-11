@@ -19,6 +19,10 @@
 add_action('admin_menu', 'fbas_add_settings_menu');
 add_action( 'admin_init', 'fbas_settings_init' );
 add_action( 'admin_enqueue_scripts', 'fbas_add_settings_js' );
+
+// hook in to get settings from ajax
+add_action( 'wp_ajax_save_settings', 'ajax_save_settings' );
+add_action( 'wp_ajax_no_priv_save_settings', 'ajax_save_settings' );
 //****
 //
 //
@@ -144,7 +148,24 @@ function fbas_add_settings_js( $hook ){
     wp_enqueue_style('fbas_settings_css', fbas_get_plugin_url().'css/admin/style.css');
 
     wp_localize_script('fbas-model-album','facbookAlbumsSync', fbas_generate_localized_data() );
+
 }// end add settings
+
+
+/**
+ * Save settings and albums via ajax
+ *
+ * @since 0.6
+ */
+function ajax_save_settings() {
+
+    $settings = $_POST;
+
+    if( isset( $_POST['validPageName'] ) && ! empty( $_POST['validPageName'] ) ){
+        update_option( 'validPageName' , sanitize_text_field( $_POST['validPageName'] ) );
+    }
+
+}
 
 /**
  * Render the checkbox asking people if they want to exclude albums.

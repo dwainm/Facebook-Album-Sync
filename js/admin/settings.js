@@ -8,7 +8,7 @@
     var SettingsModel = Backbone.Model.extend({
 
         defaults: {
-            "validPageName":  false
+            "validPageName":  Boolean(facbookAlbumsSync.validPageName)
         }
 
     });
@@ -69,6 +69,20 @@
                 settingsModel.set('validPageName', true);
                 pageNameField.addClass('success');
                 pageNameField.removeClass('error');
+
+                // save setting
+
+                var settings =  settingsModel.toJSON();
+                settings.action = 'save_settings';
+
+                $.ajax({
+                    type: "POST",
+                    url: ajaxurl,
+                    data:   settings,
+                    success: function( data ){
+                        console.log(data);
+                    }
+                });
 
             }else{
                 settingsModel.set('validPageName', false );

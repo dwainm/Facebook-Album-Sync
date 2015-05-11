@@ -191,8 +191,9 @@ function fbas_generate_localized_data($atts = array() ){
 
 	}
 
-	// localize data based on the page the users viewing
+    $data['validPageName'] =  get_option( 'validPageName' );
 
+	// localize data based on the page the users viewing
 	wp_localize_script( 'facebook_albums_sync' , 'facbookAlbumsSync', $data);
     return $data;
 
