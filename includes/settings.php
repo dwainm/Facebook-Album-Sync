@@ -181,7 +181,7 @@ function fbas_checkbox_field_exclude_ablums_render(){
     }
 
     ?>
-    <input id="fbas_exclude_albums" name="fbas_exclude_albums" type="checkbox" <?php $checked ?> /><a id="fbas-refresh" class="button" href="#">Refresh</a>
+    <input id="fbas_exclude_albums" name="fbas_exclude_albums" type="checkbox" <?php echo $checked; ?> /><a id="fbas-refresh" class="button" href="#">Refresh</a>
     <?php echo get_loading_gif('fbas_exclude_albums_loading'); ?>
     <?php
 }//end exclude checkbox field
@@ -192,8 +192,14 @@ function fbas_checkbox_field_exclude_ablums_render(){
  * @since 0.6
  */
 function fbas_albums_area_render(){
+
+    $class="";
+    if( 'on'!= get_option('fbas_exclude_albums') ){
+        $class ="hidden";
+    }
+
  ?>
-    <div id="fbas-albums" class="hidden" >
+    <div id="fbas-albums" class="<?php echo $class ;?>" >
         <?php _e('Select the albums you want to exclude','facebook-album-sync') ?>
         <ul class="fbas-albums-list" ></ul>
     </div>
