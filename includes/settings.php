@@ -159,10 +159,13 @@ function fbas_add_settings_js( $hook ){
  */
 function ajax_save_settings() {
 
-    $settings = $_POST;
-
     if( isset( $_POST['validPageName'] ) && ! empty( $_POST['validPageName'] ) ){
         update_option( 'validPageName' , sanitize_text_field( $_POST['validPageName'] ) );
+    }
+
+    // save synced albums data on the settings page
+    if( isset( $_POST[ 'albums' ] ) && ! empty( $_POST[ 'albums' ] ) ){
+        update_option( 'fbas_synced_albums', $_POST['albums'] );
     }
 
 }
@@ -175,13 +178,18 @@ function ajax_save_settings() {
 
 function fbas_checkbox_field_exclude_ablums_render(){
     $checked = '';
+    $visible = '';
     $checked_setting = get_option('fbas_exclude_albums');
     if( 'on'== $checked_setting ){
         $checked  = ' checked="checked" ';
+
+    }else{
+        $visible = 'hidden';
     }
 
     ?>
-    <input id="fbas_exclude_albums" name="fbas_exclude_albums" type="checkbox" <?php echo $checked; ?> /><a id="fbas-refresh" class="button" href="#">Refresh</a>
+    <input id="fbas_exclude_albums" name="fbas_exclude_albums" type="checkbox" <?php echo $checked; ?> />
+    <a id="fbas-refresh" class="button <?php echo $visible; ?> " href="#">Refresh</a>
     <?php echo get_loading_gif('fbas_exclude_albums_loading'); ?>
     <?php
 }//end exclude checkbox field
@@ -198,10 +206,49 @@ function fbas_albums_area_render(){
         $class ="hidden";
     }
 
+    $synced_albums = get_option( 'fbas_synced_albums' );
+    $excluded_albums = get_option( 'fbas_excluded_ids' );
+
+    //setup the excluded ids array to compare all albums against
+    $excluded_ids = array();
+    if( !empty( $excluded_albums ) && is_array( $excluded_albums ) ){
+
+        $excluded_ids = array_keys( $excluded_albums );
+
+    }
+
  ?>
     <div id="fbas-albums" class="<?php echo $class ;?>" >
         <?php _e('Select the albums you want to exclude','facebook-album-sync') ?>
-        <ul class="fbas-albums-list" ></ul>
+        <ul class="fbas-albums-list" >
+            <?php
+            if( !empty( $synced_albums ) && is_array( $synced_albums ) ){
+                foreach( $synced_albums as $album ){
+
+                    $id = $album['id'];
+                    $album_name = $album['name'];
+                    $input_name = 'fbas_excluded_ids['. $id  .']';
+
+                    //is this albums checked
+                    $checked = '';
+                    if( in_array( intval( $id ), $excluded_ids )  ){
+                        $checked  = ' checked="checked" ';
+                    }
+
+                    // generate the albums list item
+                    $li = '';
+                    $li .= '<li>';
+                    $li .= '<input type="checkbox" '. $checked .'name="'. esc_attr( $input_name ) .'" id="'.esc_attr( $id) . '">';
+                    $li .= '<label for="'.esc_attr( $id) . '">'. $album_name .'</label>';
+                    $li .= '</li>';
+
+                    // output list item
+                    echo $li;
+
+                }
+            }
+            ?>
+        </ul>
     </div>
 
 <?php

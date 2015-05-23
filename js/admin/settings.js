@@ -5,6 +5,11 @@
 (function( $, _ , Backbone ){
 
 
+    // global DOM elements
+    var pageNameField = $('[name=fbas_page]');
+    var albumsHolder = $('#fbas-albums');
+    var refreshButton = $('#fbas-refresh');
+
     var SettingsModel = Backbone.Model.extend({
 
         defaults: {
@@ -18,9 +23,33 @@
     var albumsCollection = new  fbas.AlbumCollection();
 
     /**
+     * Listen to the fetch complete event
+     * @returns {boolean}
+     */
+    var fetchComplete = function(){
+
+            // make sure there are models
+            if( ! albumsCollection.length > 0 ){
+                return false;
+            }
+
+            var data = {
+                action: 'save_settings',
+                albums: albumsCollection.toJSON()
+            };
+
+            //ajax call to save the models json
+            $.post( ajaxurl, data );
+
+    };
+    // storing the data model within WordPress for easy access
+    albumsCollection.on('fetchCompleted', fetchComplete );
+
+    /**
      * Add albums to list
      */
     var albumList = $('#fbas-albums .fbas-albums-list');
+
     albumsCollection.on( 'add', function(model){
 
         var checkboxName = 'fbas_excluded_ids['+ model.get('id') +']';
@@ -31,10 +60,6 @@
         albumList.append( li );
 
     });
-
-    /**
-     * Ensure that the album list spans 2 columns
-     */
 
     /**
      * Submit click event handler
@@ -97,29 +122,79 @@
 
     });
 
-    $('#fbas_exclude_albums').change(function ( e ) {
+    /**
+     * Check if there is valid page name
+     * Notify the user of this error
+     */
+    var hasValidPageName = function(){
 
-        var albumsHolder = $('#fbas-albums');
-        // exit if not checked
-        if(! $(this).is(':checked')){
-            albumsHolder.addClass('hidden');
+        if( false == settingsModel.get('validPageName') ){
+
+            pageNameField.addClass('error');
+            pageNameField.focus();
+            $(this).removeAttr('checked');
             return false;
+
         }else{
+            return true;
+        }
 
-            var pageNameField = $('[name=fbas_page]');
-            if( false == settingsModel.get('validPageName') ){
-                pageNameField.addClass('error');
-                pageNameField.focus();
-                $(this).removeAttr('checked');
-                return false;
-            }
+    };
 
-            albumsHolder.removeClass('hidden');
-            var pageAlbumsApiUrl = 'https://graph.facebook.com/'+ pageNameField.val()+"/albums/";
-            albumsCollection.fetchAlbums( pageAlbumsApiUrl );
+    /**
+     * Refresh the list of list item checkboxes
+     */
+    var refreshList = function ( e ) {
+
+        albumsCollection.reset();
+        albumsHolder.find( '.fbas-albums-list' ).empty();
+        var pageAlbumsApiUrl = 'https://graph.facebook.com/'+ pageNameField.val()+"/albums/";
+        albumsCollection.fetchAlbums( pageAlbumsApiUrl );
+
+    };
+
+    $('#fbas_exclude_albums').change( function( e ){
+
+        if( 'fbas_exclude_albums' != e.target.id ){
+
+            return;
 
         }
 
+        var checkbox = $(e.target);
+        // exit if not checked
+        if( ! checkbox.is(':checked') ){
+
+            albumsHolder.addClass('hidden');
+            refreshButton.addClass('hidden');
+
+        }else{
+
+            if( ! hasValidPageName() ){
+                return false;
+            }
+
+            refreshButton.removeClass('hidden');
+            albumsHolder.removeClass('hidden');
+
+            // update the list
+            refreshList();
+
+        }
     });
+
+    $( '#fbas-refresh' ).on( 'click', function( e  ){
+
+        if( ! hasValidPageName() ){
+            return false;
+        }
+
+        // update the list
+        refreshList();
+        return true;
+
+    });
+
+
 
 }( jQuery, _ , Backbone ));

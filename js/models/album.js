@@ -45,8 +45,12 @@
         processCoverPhoto: function( ajaxData ){
 
             this.set( { photoUrl: ajaxData.images[0].source } );
-            this.collection.removeFromLoadingQueue( this );
 
+            if( typeof this.collection != 'undefined') {
+
+                this.collection.removeFromLoadingQueue(this);
+
+            }
         }
     });
 // a collection for all albums
@@ -108,7 +112,7 @@
         },
 
         /**
-         * Get all ablums and store it in this collection
+         * Get all albums and store it in this collection
          */
         fetchAlbums: function ( url ){
 
@@ -140,6 +144,8 @@
                 // Check if the api has more albums avaialbe then fetch them
                 if( ! _.isEmpty( apiJson.paging.next) ){
                     thisCollection.fetchAlbums(  apiJson.paging.next );
+                }else{
+                    thisCollection.trigger('fetchCompleted');
                 }
 
             }); // end ajax call
