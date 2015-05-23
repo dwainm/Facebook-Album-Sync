@@ -11,6 +11,10 @@
 
     fbas.AlbumModel = Backbone.Model.extend({
 
+        defaults: {
+            excluded: true
+        },
+
         initialize: function( newData, collection ){
             if( this.attributes.cover_photo ) {
 
@@ -30,6 +34,8 @@
                         url: coverPhotoApiUrl,
                         type: 'GET'
                     }).done(_.bind(this.processCoverPhoto, this));
+
+                    this.set('excluded', false );
 
                 }else{
                     // this album has been excluded

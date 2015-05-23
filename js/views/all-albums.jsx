@@ -5,18 +5,16 @@
  *
  * The code using
  */
+
+// For chrome debugging:
+//# sourceURL=all-albums.js
 ( function( fbas ,$ , _ , Backbone , React ){
 
     //facbookAlbumsSync is localized through WordPress
     var ALbumsCount = 1;
     var rowItemscnt = 1;
-    var excludeAlbums = facbookAlbumsSync.excludeAlbums;
     var prettypermalinkon = facbookAlbumsSync.prettyPermalinks ;
 
-    // exclude albums
-    for (albumid in excludeAlbums){
-        excludeAlbums[albumid] = excludeAlbums[albumid].trim();
-    }
 
     var apiUrl = "https://graph.facebook.com/" +  facbookAlbumsSync.facebookPageName + "/albums/";
 
@@ -132,6 +130,7 @@
             if( _.isEmpty( this.state.loadingQueue )){
                 var loaderClass = 'hidden';
             }
+
             var includedAlbums = _.filter( this.state.models ,function ( album ) {
                 return  true != album.get('excluded');
             });
