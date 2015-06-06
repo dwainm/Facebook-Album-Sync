@@ -13,12 +13,18 @@
 // Load the plugin settings scripts
 include_once('includes/settings.php');
 
+// Set the the plugin up to load the all albums page by default
+global $fbas_is_all_albums_page;
+$fbas_is_all_albums_page = true;
+
 /**
 *  Load the needed scripts
 */
 function fbas_version(){
+
 	$plugin_version = '0.6';
 	return $plugin_version;
+
 }// end version
 
 /**
@@ -76,7 +82,8 @@ function enqueue_view_scripts(){
 	$plugin_url = plugin_dir_url( __FILE__ );
     wp_enqueue_script( 'fbas-react',$plugin_url.'js/lib/react/react.min.js', array(), fbas_version(), true );
 
-	if( all_albums_view() ){
+    global $fbas_is_all_albums_page;
+	if( $fbas_is_all_albums_page ){
 		// load the album model file that contains the logic for fetching albums from facebook.
 		wp_enqueue_script('fbas-model-album',$plugin_url.'js/models/album.js', array('jquery','underscore','backbone', 'fbas-react'), fbas_version() , true );
 		wp_enqueue_script('fbas_all_albums_view',$plugin_url.'js/views/all-albums.js', array('jquery','underscore','backbone', 'fbas-react'), '0.4', true );
@@ -106,7 +113,9 @@ function print_dev_jsx_scripts(){
         // load the jsx compiler script
         echo _fbas_generate_script( $plugin_url.'js/lib/react/react.js' );
         echo _fbas_generate_script( $plugin_url.'js/lib/react/react-jsx.js' );
-        if( all_albums_view() ){
+
+        global $fbas_is_all_albums_page;
+        if( $fbas_is_all_albums_page ){
 
             // load the album model file that contains the logic for fetching albums from facebook.
             echo _fbas_generate_script( $plugin_url.'js/models/album.js' );
@@ -146,7 +155,8 @@ function fbas_generate_localized_data($atts = array() ){
 
 	$data  = array( 'facebookPageName' => get_option('fbas_page') );
 
-	if( all_albums_view() ){	
+    global $fbas_is_all_albums_page;
+	if( $fbas_is_all_albums_page ){
 		//
 		// create the array that will be localizaed
 		//
@@ -206,15 +216,18 @@ function fbas_generate_localized_data($atts = array() ){
 * @since 0.1 
 */
 
-function fbas_shortcode_render($atts) {
+function fbas_shortcode_render( $atts ) {
 
 	// alow function to hook in at this point
 	do_action('fbas_shortcode_before', $atts);
 
+
+
 	//perform check for shortcode attributes
 	if( is_array($atts) ) {
 		if (array_key_exists ( 'album', $atts )){
-			$album_id = $atts['album'];
+            global $fbas_album_id;
+			$fbas_album_id = $atts['album'];
 		}
 
 		if (array_key_exists('exclude', $atts)){
@@ -222,14 +235,20 @@ function fbas_shortcode_render($atts) {
 		}
 	}
 
-    if ( all_albums_view() ){
+    // Define the $fbas_is_all_albums_page ::: Please not this is used later when printing out the scripts
+    global $fbas_is_all_albums_page;
+    $fbas_is_all_albums_page =  ! ( isset( $_REQUEST['fbasid'] ) || isset( $fbas_album_id ) );
 
-    	// show albums
-    	include('templates/all-albums.php'); 
+    // if there is a query param `fbasid` or the $album_id is set via the shortcode
+    if ( $fbas_is_all_albums_page ){
 
-    }else{// show specific photos in an album
+        // default show albums
+        include('templates/all-albums.php');
 
-    	include('templates/single-album.php');
+    }else{
+
+        // show specific photos in an album
+        include('templates/single-album.php');
 
     }
 
@@ -250,20 +269,6 @@ function add_my_var($public_query_vars) {
 	return $public_query_vars;
 }
 add_filter('query_vars', 'add_my_var');
-
-
-/**
-* Determine if we're on the all albums view or on the single 
-* album page
-*
-* @since 0.4
-*/
-function all_albums_view(){
-
-		$result = (  !isset( $_REQUEST['fbasid'] ) && !isset( $album_id ) )? true : false;
-
-	    return $result;
-}
 
 /**
 * is_pretty_permalinks_on check the wordpress permalink structure and return true 

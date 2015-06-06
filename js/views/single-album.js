@@ -8,7 +8,15 @@
 ( function( fbas ,$ , _ , Backbone , React ){
 
     var allPhotos = new fbas.PhotoCollection();
-    var albumPhotosUrl = "https://graph.facebook.com/"+ allPhotos.albumId +"/photos";
+    var albumId = '';
+
+    if( "undefined" == typeof fbasAlbumId ){
+        albumId = albuallPhotos.albumId
+    }else{
+        albumId = fbasAlbumId
+    }
+
+    var albumPhotosUrl = "https://graph.facebook.com/"+ albumId +"/photos";
     allPhotos.fetchPhotos( albumPhotosUrl );
 
 
