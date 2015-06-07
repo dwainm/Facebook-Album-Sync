@@ -1,5 +1,7 @@
-Facebook Album Sync -  WordPress Plugin
+This Plugin is Retired
 ====
+Facebook Album Sync -  WordPress Plugin
+
  
 Load your Facebook galleries on any page by using the plugin shortcode. With this plugin you can:
 
