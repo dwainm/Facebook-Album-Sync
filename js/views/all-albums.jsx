@@ -5,18 +5,16 @@
  *
  * The code using
  */
+
+// For chrome debugging:
+//# sourceURL=all-albums.js
 ( function( fbas ,$ , _ , Backbone , React ){
 
     //facbookAlbumsSync is localized through WordPress
     var ALbumsCount = 1;
     var rowItemscnt = 1;
-    var excludeAlbums = facbookAlbumsSync.excludeAlbums;
     var prettypermalinkon = facbookAlbumsSync.prettyPermalinks ;
 
-    // exclude albums
-    for (albumid in excludeAlbums){
-        excludeAlbums[albumid] = excludeAlbums[albumid].trim();
-    }
 
     var apiUrl = "https://graph.facebook.com/" +  facbookAlbumsSync.facebookPageName + "/albums/";
 
@@ -80,9 +78,16 @@
          * @returns XML
          */
         render: function(){
+
+            if( true ==this.state.get('excluded') ){
+                albumClass="hidden";
+            }else{
+                albumClass="albumlink"
+            }
+
             var albumStyle = { backgroundImage: 'url("'+this.state.get('photoUrl')+'")' };
             var linkToAlbumPage = document.URL+"?fbasid=" + this.state.id;
-           return(  <a className="albumlink" href={linkToAlbumPage} >
+           return(  <a className={ albumClass }  href={linkToAlbumPage} >
                 <img  key={this.state.id} style={albumStyle}  />
                 <div className="album-name"> { this.state.attributes.name } </div>
            </a>);
@@ -99,7 +104,11 @@
             return allAlbums;
         },
         getInitialState: function(){
-            return {models: [ ] };
+            return { models: [ ],
+                    filter: function(){
+                        return [ ];
+                    }
+            };
         },
         update: function( e,change ){
 
@@ -122,11 +131,14 @@
                 var loaderClass = 'hidden';
             }
 
+            var includedAlbums = _.filter( this.state.models ,function ( album ) {
+                return  true != album.get('excluded');
+            });
 
             return (
                 <ul>
                 {[ <div className={loaderClass} id='fbloader'></div> ,
-                    this.state.models.map( function(album, index ) {
+                    includedAlbums.map( function(album, index ) {
                         var noOfColumns = 4;
                         var res = ( index + 1 ) % noOfColumns;
                         var last = 0==res ? 'last': '';

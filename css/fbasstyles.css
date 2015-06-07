@@ -28,7 +28,9 @@ body {
 }
 
 
-
+a.hidden{
+    display: none;
+}
 .albumlink{
     border: 1px solid #CCC;
     display: inline-block;

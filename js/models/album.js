@@ -11,17 +11,37 @@
 
     fbas.AlbumModel = Backbone.Model.extend({
 
+        defaults: {
+            excluded: true
+        },
+
         initialize: function( newData, collection ){
             if( this.attributes.cover_photo ) {
 
-                // notify the collection that this model is loading
-                collection.addToLoadingQueue( this );
-                var  coverPhotoApiUrl = 'https://graph.facebook.com/' + this.attributes.cover_photo
-                $.ajax({
-                    dataType: 'jsonp',
-                    url: coverPhotoApiUrl,
-                    type: 'GET'
-                }).done( _.bind( this.processCoverPhoto, this) );
+                var fbas_settings =  facbookAlbumsSync || {};
+                var excluded = [];
+                if( ! _.isEmpty( fbas_settings ) ){
+                    excluded = fbas_settings.exludeAlbums || [];
+                }
+
+                if( -1 == _.indexOf( excluded , parseInt( this.get('id') ) ) ) {
+
+                    // notify the collection that this model is loading
+                    collection.addToLoadingQueue( this );
+                    var  coverPhotoApiUrl = 'https://graph.facebook.com/' + this.attributes.cover_photo;
+                    $.ajax({
+                        dataType: 'jsonp',
+                        url: coverPhotoApiUrl,
+                        type: 'GET'
+                    }).done(_.bind(this.processCoverPhoto, this));
+
+                    this.set('excluded', false );
+
+                }else{
+                    // this album has been excluded
+                    this.set('excluded', true);
+
+                }
 
             }
         },
@@ -31,8 +51,12 @@
         processCoverPhoto: function( ajaxData ){
 
             this.set( { photoUrl: ajaxData.images[0].source } );
-            this.collection.removeFromLoadingQueue( this );
 
+            if( typeof this.collection != 'undefined') {
+
+                this.collection.removeFromLoadingQueue(this);
+
+            }
         }
     });
 // a collection for all albums
@@ -94,7 +118,7 @@
         },
 
         /**
-         * Get all ablums and store it in this collection
+         * Get all albums and store it in this collection
          */
         fetchAlbums: function ( url ){
 
@@ -126,6 +150,8 @@
                 // Check if the api has more albums avaialbe then fetch them
                 if( ! _.isEmpty( apiJson.paging.next) ){
                     thisCollection.fetchAlbums(  apiJson.paging.next );
+                }else{
+                    thisCollection.trigger('fetchCompleted');
                 }
 
             }); // end ajax call
