@@ -3,9 +3,13 @@ Contributors: dwainm
 Tags: Facebook albums,Facebook gallery
 Requires at least: 4.2.2
 Tested up to: 4.2.2
-Stable tag: 0.5
+Stable tag: 0.6
 License: GPLv2 or later
 
+
+PLEASE NOTE:
+
+This plugin is now retired an no longer supported.
 
 Load your Facebook albums on any page by using short codes.
 
@@ -79,6 +83,9 @@ You can also submit issues on github [https://github.com/dwainm/Facebook-Albums-
 1. Will be uploaded.
 
 == Changelog ==
+
+= 0.6 =
+* RETIRE PLUGIN
 
 = 0.5 =
 * Fix - Loading duplicate albums
